@@ -1,6 +1,6 @@
 import {SHOW_BOOK_LIST_IDS} from '../../actions'
 
-const initialState = []
+const initialState = [];
 
 export default function books(state = initialState, action){
     switch (action.type) {
