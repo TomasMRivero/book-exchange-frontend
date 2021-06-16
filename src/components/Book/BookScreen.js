@@ -2,6 +2,7 @@ import ky from 'ky-universal';
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, batch } from 'react-redux';
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from '../../redux/actions';
+import SearchField from '../SearchField';
 
 import BookCard from './BookCard';
 
@@ -42,7 +43,9 @@ export default function BookScreen() {
     }, [dispatch]);
 
     return (
+
         <div className="BookScreen">
+            <SearchField/>
             <div className="section-header">
                 <h1>LIBROS</h1>
                 <h5>Lista de libros</h5>
@@ -53,7 +56,7 @@ export default function BookScreen() {
                     key = {book.id}
                     book = {book}
                     owner = {users[book.user_account_id]}
-                />    
+                />
             )}
 
         </div>
