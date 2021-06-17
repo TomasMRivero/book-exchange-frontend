@@ -1,6 +1,6 @@
 import QueryString from "qs";
 import ky from "ky-universal";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
