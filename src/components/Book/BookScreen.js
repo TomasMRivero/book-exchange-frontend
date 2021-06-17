@@ -1,64 +1,52 @@
-import ky from 'ky-universal';
-import { useEffect } from 'react';
-import { useDispatch, useSelector, batch } from 'react-redux';
-import { showBookList, showBookListIDs, showUserList, showUserListIDs } from '../../redux/actions';
+import ky from "ky-universal";
+import { useEffect } from "react";
+import { batch, useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { showBook, showUserList, showUserListIDs } from "../../redux/actions";
 
 import SearchField from '../SearchField';
-import BookCard from './BookCard';
 
-export default function BookScreen() {
+export default function BookScreen(){
     const dispatch = useDispatch();
+    const bookID = Number(useParams().id)
 
-    const bookIDs = useSelector(state => state.ui.books);
-    const books = useSelector(state => bookIDs.map(id => state.models.books[id]));
+    const book = useSelector(state => state.models.book);
 
-    const userIDs = useSelector(state => state.ui.users);
+    const userIDs = useSelector(state => state.ui.books);
     const users = useSelector(state => userIDs.map(id => state.models.users[id]));
 
     useEffect(() => {
         async function fetch() {
-            const [books, users] = await Promise.all([
-                ky.get('http://localhost:4000/book').json(),
+            const [book, users] = await Promise.all([
+                ky.get(`http://localhost:4000/book/${bookID}`).json(),
                 ky.get('http://localhost:4000/user').json()
             ]);
 
             batch(() => {
-                dispatch(
-                    showBookList(books)
-                );
-                dispatch(
-                    showBookListIDs(books.map(b => b.id).reverse())
-                );
-                dispatch(
-                    showUserList(users)
-                );
-                dispatch(
-                    showUserListIDs(users.map(u => u.id).reverse())
-                );
+                dispatch(showBook(book));
+                dispatch(showUserList(users));
+                dispatch(showUserListIDs(users.map(u => u.id).reverse()));
             });
-            
+
         }
-
-        fetch();
-    }, [dispatch]);
-
+        fetch()
+        console.log("fetched");
+    }, []);
+    console.log(book);
     return (
 
         <div className="BookScreen">
-            <SearchField/>
-            <div className="section-header">
-                <h1>LIBROS</h1>
-                <h5>Lista de libros</h5>
+            <SearchField />
+            <div className="book">
+                <h1>{book.title}</h1>
+                <p>imagen</p>
+                <p><strong>Autor: </strong>{book.author}</p>
+                <p><strong>Descripcion:</strong></p>
+                <p>{book.description}</p>
+                <br/>
+                <p><strong>Dueño: </strong>{book.user_account_id}</p>                
             </div>
-
-            {books.map(book =>
-                <BookCard
-                    key = {book.id}
-                    book = {book}
-                    owner = {users[book.user_account_id]}
-                />
-            )}
-
         </div>
+
     )
-}
+};

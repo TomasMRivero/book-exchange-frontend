@@ -1,6 +1,6 @@
-import {SHOW_BOOK_LIST} from '../../actions'
+import {SHOW_BOOK, SHOW_BOOK_LIST} from '../../actions'
 
-export default function books(state = {}, action) {
+export function books(state = {}, action) {
     switch (action.type) {
         case SHOW_BOOK_LIST:
             const extend = {};
@@ -12,6 +12,16 @@ export default function books(state = {}, action) {
             return {
                 ...state,
                 ...extend
+            };
+        default:
+            return state;
+    }
+}
+export function book(state = {}, action) {
+    switch (action.type) {
+        case SHOW_BOOK:
+            return{
+                ...action.payload
             };
         default:
             return state;
