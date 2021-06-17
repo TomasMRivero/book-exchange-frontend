@@ -19,7 +19,11 @@ export default function SearchField(){
         if (!searchField || !searchValue){
             return
         }
-        history.push(`/search/${searchField}?q=${searchValue.trim()}`);
+        const uri = searchValue.trim();
+        const resp = encodeURIComponent(uri)
+
+        
+        history.push(`/book/search/${searchField}?q=${resp}`);
     }, [history, searchField, searchValue]);
 
 
@@ -54,6 +58,7 @@ export default function SearchField(){
                         Autor
                     </option>
                 </select>
+            
                 <button
                     type="submit"
                     className="search-button"
