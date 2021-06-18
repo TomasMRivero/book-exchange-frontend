@@ -1,6 +1,6 @@
-import { SHOW_USER_LIST } from "../../actions/userActions";
+import { SHOW_USER_LIST, SHOW_USER } from "../../actions/userActions";
 
-export default function users(state = {}, action){
+export function users(state = {}, action){
     switch (action.type) {
         case SHOW_USER_LIST:
             const extend = {};
@@ -17,4 +17,14 @@ export default function users(state = {}, action){
             return state;
     }
 
+}
+export function user(state = {}, action) {
+    switch (action.type) {
+        case SHOW_USER:
+            return{
+                ...action.payload
+            };
+        default:
+            return state;
+    }
 }

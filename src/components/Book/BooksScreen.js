@@ -1,5 +1,5 @@
 import ky from 'ky-universal';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector, batch } from 'react-redux';
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from '../../redux/actions';
 
@@ -14,6 +14,8 @@ export default function BooksScreen() {
 
     const userIDs = useSelector(state => state.ui.users);
     const users = useSelector(state => userIDs.map(id => state.models.users[id]));
+    
+    const[loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         async function fetch() {
@@ -39,7 +41,11 @@ export default function BooksScreen() {
             
         }
 
+        setLoaded(true);
         fetch();
+        return function cleanup() {
+            console.log("limpiando")
+        };
     }, [dispatch]);
 
     return (
@@ -51,7 +57,7 @@ export default function BooksScreen() {
                 <h5>Lista de libros</h5>
             </div>
 
-            {books.map(book =>
+            {loaded && books.map(book =>
                 <BookCard
                     key = {book.id}
                     book = {book}

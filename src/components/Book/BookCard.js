@@ -10,7 +10,7 @@ export default function BookCard({
     const onClickBook = useCallback((e) => {
         e.preventDefault();
         history.push(`/book/${book.id}`)
-    });
+    }, [history, book]);
     return(
         <div className = "card">
             <h2 onClick={onClickBook} style={{cursor:'pointer'}}>{book.title}</h2>
