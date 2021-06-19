@@ -60,7 +60,6 @@ export default function BookUploadScreen (){
     return(
 
         <div className ="upload-book-screen">
-            <SearchField />
 
             <div className="section-header">
                 <h1>LIBROS</h1>

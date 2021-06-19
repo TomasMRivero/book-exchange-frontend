@@ -73,7 +73,6 @@ export default function BookSearchResults({location}){
 
     return(
         <div className="BookSearchResults">
-            <SearchField/>
             <div className="section-header">
                 <h1>LIBROS</h1>
                 <h5>Resultado de la búsqueda:</h5>

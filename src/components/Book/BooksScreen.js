@@ -51,7 +51,6 @@ export default function BooksScreen() {
     return (
 
         <div className="BooksScreen">
-            <SearchField/>
             <div className="section-header">
                 <h1>LIBROS</h1>
                 <h5>Lista de libros</h5>

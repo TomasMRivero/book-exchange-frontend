@@ -9,7 +9,7 @@ import BookCard from "./BookCard";
 
 export default function BookScreen(){
     const dispatch = useDispatch();
-    const bookID = Number(useParams().id)
+    const bookID = Number(useParams().id);
 
     const book = useSelector(state => state.models.book);
     const user = useSelector(state => state.models.user);
@@ -20,7 +20,7 @@ export default function BookScreen(){
     const userIDs = useSelector(state => state.ui.users);
     const users = useSelector(state => userIDs.map(id => state.models.users[id]));
     
-    const[loaded, setLoaded] = useState(false)
+    const[loaded, setLoaded] = useState(false);
     async function fetch() {
         try{
             const [book, books, users] = await Promise.all([
@@ -31,7 +31,7 @@ export default function BookScreen(){
 
             
             batch(() => {
-                (dispatch(showBook(book)));
+                dispatch(showBook(book));
 
                 dispatch(showUser(users.find(u => u.id === book.user_account_id)));
 
@@ -53,7 +53,8 @@ export default function BookScreen(){
         fetch()
         console.log("fetched");
         return function cleanup() {
-            console.log("limpiando")
+            console.log("limpiando");
+            return ky.stop;
         };
     }, [bookID, dispatch]);
 
@@ -64,7 +65,6 @@ export default function BookScreen(){
     return (
 
         <div className="BookScreen">
-            <SearchField />
             <div className="book">
                 <h1>{book.title}</h1>
                 <p>imagen</p>
@@ -74,14 +74,16 @@ export default function BookScreen(){
                 <p>{book.description}</p>
                 </div>
                 <br/>
-                <p>otros libros de <strong>{user.alias}</strong></p>
             </div>
+            <div className = "book-carousel">
+            <p>otros libros de <strong>{user.alias}</strong></p>
             {loaded && books.map(book =>
                 <BookCard
                     key = {book.id}
                     book = {book}
                 />
             )}
+            </div>
         </div>
 
     )
