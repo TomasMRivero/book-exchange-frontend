@@ -5,8 +5,7 @@ import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
 
-import SearchField from "../SearchField";
-import BookCard from './BookCard';
+import BookItem from './BookItem';
 
 export default function BookSearchResults({location}){
     console.log("results")
@@ -57,9 +56,6 @@ export default function BookSearchResults({location}){
         };
     }, [location, dispatch]);
     
-
-    console.log(books.length);
-    console.log(loaded)
     function NoResult(){
         if(books.length > 0){
             return null;
@@ -79,7 +75,7 @@ export default function BookSearchResults({location}){
             </div>
 
             {loaded && books.map(book =>
-                <BookCard
+                <BookItem
                     key = {book.id}
                     book = {book}
                     owner = {users[book.user_account_id]}

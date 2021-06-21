@@ -5,7 +5,6 @@ import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUser, showUserList, showUserListIDs } from "../../redux/actions";
 
 import BookCard from "../Book/BookCard";
-import SearchField from "../SearchField";
 
 export default function UserScreen(){
     const dispatch =  useDispatch();
@@ -54,7 +53,7 @@ export default function UserScreen(){
         <div className = "UserScreen">
             <div className="user-data">
                 <h2><strong>{user.name}</strong></h2>
-                <h4>@{user.alias}</h4>
+                <h4>{"@"+user.alias}</h4>
                 <span>{books.length} Libros publicados</span>
             </div>
             {loaded && books.map(book=>

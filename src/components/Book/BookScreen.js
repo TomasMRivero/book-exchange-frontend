@@ -4,7 +4,6 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
 
-import SearchField from '../SearchField';
 import BookCard from "./BookCard";
 
 export default function BookScreen(){

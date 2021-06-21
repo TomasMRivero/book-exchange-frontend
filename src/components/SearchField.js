@@ -26,9 +26,9 @@ export default function SearchField(){
         history.push(`/book/search/${searchField}?q=${resp}`);
     }, [history, searchField, searchValue]);
 
-
+    
     return(
-        <div className="SearchField">
+        <div className="search-field">
             <form className="search-form" onSubmit={onSearch}>
                 <input
                     className = "search-value"

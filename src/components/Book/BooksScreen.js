@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector, batch } from 'react-redux';
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from '../../redux/actions';
 
-import SearchField from '../SearchField';
-import BookCard from './BookCard';
+import BookItem from './BookItem';
 
 export default function BooksScreen() {
     const dispatch = useDispatch();
@@ -57,7 +56,7 @@ export default function BooksScreen() {
             </div>
 
             {loaded && books.map(book =>
-                <BookCard
+                <BookItem
                     key = {book.id}
                     book = {book}
                     owner = {users[book.user_account_id]}
