@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useHistory } from 'react-router';
-
+import {Select, InputBase, MenuItem, IconButton} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 export default function SearchField(){
     const history = useHistory();
 
@@ -28,16 +29,21 @@ export default function SearchField(){
 
     
     return(
-        <div className="search-field">
-            <form className="search-form" onSubmit={onSearch}>
-                <input
+        <>
+            <form className="search-form" onSubmit={onSearch} > 
+                <IconButton
+                    type="submit"
+                    className="search-button"
+                >
+                    <SearchIcon />   
+                </IconButton>
+                <InputBase
                     className = "search-value"
                     placeholder = "Buscar por..."
                     onChange={onChangeSearchValue}
                     value={searchValue}
                 />
-
-                <select
+                <Select
                     className="search-field"
                     id="field"
                     name="field"
@@ -45,28 +51,25 @@ export default function SearchField(){
                     onChange={onChangeSearchField}
                     value={searchField}
                 >
-                    <option
+                    <MenuItem
                         key="title"
                         value="title"
                     >
                         Título
-                    </option>
-                    <option
+                    </MenuItem>
+                    <MenuItem
                         key="author"
                         value="author"
                     >
                         Autor
-                    </option>
-                </select>
+                    </MenuItem>
+                </Select>
+                
+                
             
-                <button
-                    type="submit"
-                    className="search-button"
-                >
-                    Buscar    
-                </button>
+                
 
             </form>
-        </div>
+        </>
     )
 }

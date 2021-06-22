@@ -1,14 +1,32 @@
 import ky from "ky-universal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
+import { makeStyles } from '@material-ui/core/styles';
+import BookGrid from "./BookGrid";
 
-import BookCard from "./BookCard";
+const useStyles = makeStyles((theme) => ({
+    root: {
+        margin: 'auto',
+        background: 'white',
+        border: 0,
+        borderRadius: 3,
+        width: '90%',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        overflow: 'hidden',
+        backgroundColor: theme.palette.background.paper,
+    }
+  }));
 
 export default function BookScreen(){
+    const classes = useStyles();
+
     const dispatch = useDispatch();
     const bookID = Number(useParams().id);
+    const history = useHistory();
 
     const book = useSelector(state => state.models.book);
     const user = useSelector(state => state.models.user);
@@ -57,16 +75,20 @@ export default function BookScreen(){
         };
     }, [bookID, dispatch]);
 
+    const onClickUser = useCallback((e) => {
+        history.push(`/user/${user.id}`);
+    })
+
     console.log(book);
     console.log(books);
     console.log(user);
 
     return (
 
-        <div className="BookScreen">
+        <div className="book-screen">
             <div className="book">
                 <h1>{book.title}</h1>
-                <p>imagen</p>
+                <img className="book-img" src="https://images.freeimages.com/images/premium/previews/1461/1461865-old-worn-book.jpg" width="100%" />
                 <p><strong>Autor: </strong>{book.author}</p>
                 <div className="description-field">
                 <p>{book.description?<strong>Descripción:</strong>:<i>No hay descripción</i>}</p>
@@ -74,14 +96,11 @@ export default function BookScreen(){
                 </div>
                 <br/>
             </div>
-            <div className = "book-carousel">
-            <p>otros libros de <strong>{user.alias}</strong></p>
-            {loaded && books.map(book =>
-                <BookCard
-                    key = {book.id}
-                    book = {book}
-                />
-            )}
+            <div className={classes.root} width="80%">
+            <p>otros libros de <strong onClick = {onClickUser}>{user.alias}</strong></p>
+            
+            {loaded && <BookGrid books={books}/>}
+
             </div>
         </div>
 
