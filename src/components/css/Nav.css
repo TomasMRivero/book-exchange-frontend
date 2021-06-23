@@ -4,6 +4,7 @@
 .nav-bar{
     height: 2rem;
     position: sticky;
+    z-index: 9999999
 }
 .nav-bar .search-form{
     display: flex;

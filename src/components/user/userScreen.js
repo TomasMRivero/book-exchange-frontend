@@ -4,6 +4,7 @@ import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUser, showUserList, showUserListIDs } from "../../redux/actions";
 
+import BookGrid from "../Book/BookGrid";
 import BookCard from "../Book/BookCard";
 
 export default function UserScreen(){
@@ -51,17 +52,14 @@ export default function UserScreen(){
 
     return(
         <div className = "UserScreen">
+            {loaded &&
             <div className="user-data">
                 <h2><strong>{user.name}</strong></h2>
                 <h4>{"@"+user.alias}</h4>
                 <span>{books.length} Libros publicados</span>
             </div>
-            {loaded && books.map(book=>
-                <BookCard
-                    key = {book.id}
-                    book = {book}
-                />
-            )}
+            }
+            {loaded && <BookGrid books={books} />}
         </div>
     )
 }
