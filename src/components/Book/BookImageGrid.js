@@ -1,7 +1,7 @@
-import { Grid, Paper } from "@material-ui/core"
+import { Grid } from "@material-ui/core"
 import GridList from "@material-ui/core/GridList"
-import GridListTile from "@material-ui/core/GridListTile"
 import { makeStyles } from "@material-ui/core/styles"
+import { useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -24,18 +24,24 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 0
     },
     gridListImg:{
+        transition: ".3s ease",
         height: 'auto',
         width:'100%',
         objectFit: 'cover',
         objectPosition: '50% 50%',
+        cursor: 'pointer',
         border: 0,
         margin: 0,
         padding: 0,
+        backfaceVisibility: 'hidden',
+        opacity: 1, '&:hover':{
+            opacity: (theme.palette.common.white, 0.25),
+        }
     },
     mainImg:{
         width: '100%',
         height: '100%',
-        objectFit: 'cover',
+        objectFit: 'contain',
         objectPosition: '50% 50%'
     }
 
@@ -44,21 +50,23 @@ const useStyles = makeStyles((theme) => ({
 export default function BookImageGrid(props) {
     const classes = useStyles();
     const main = props.main;
+    const [shown, setShown] = useState(main);
     const images = props.images;
+
     return(
         <div className={classes.root}>
             
             <Grid container spacing={2} >
 
-                <Grid item xs={9} >
-                    <img className={classes.mainImg} src={main} />
+                <Grid item xs={10} >
+                    <img className={classes.mainImg} src={shown} />
                 </Grid>
 
-                <Grid item xs={3} container className={classes.gridListContainer}>
+                <Grid item xs={2} container className={classes.gridListContainer}>
                     <GridList className={classes.gridList} spacing={0} cols={1} cellHeight={'auto'} >
 
                         {images.map(i=>
-                        <img className={classes.gridListImg} src={i} />    
+                        <img className={classes.gridListImg} src={i} onClick={() => setShown(i)}  />    
                         )}
 
                     </GridList>
