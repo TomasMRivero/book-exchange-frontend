@@ -13,10 +13,10 @@ export default function App() {
   return (
     
     <div className="App">
-      <BrowserRouter>
+      <BrowserRouter >
         
         <Nav />     
-        <Switch>
+        <Switch >
           <Route exact path="/" component={MainScreen} />
           <Route path="/book/search/:field" component={BookSearchResults} />
           <Route path="/book/showall" component={BooksScreen} />

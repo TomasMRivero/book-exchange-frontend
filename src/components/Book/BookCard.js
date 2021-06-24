@@ -10,14 +10,16 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: 'inline-block',
         width: '100%',
+        height: '100%',
     },
     content: {
+        height: '100%',
         background: '#F0F3F8',
         padding: 7,
         paddingTop: 13,
     },
     image: {
-        height: '40vw',
+        //height: '30vw',
         width: '100%',
         objectFit: 'cover',
         objectPosition: '50% 50%'
@@ -27,13 +29,13 @@ const useStyles = makeStyles((theme) => ({
             fontSize: 14,
         },
         [theme.breakpoints.up('sm')]: {
-            fontSize: 17,
+            fontSize: 14,
         },
         [theme.breakpoints.up('md')]: {
-            fontSize: 20,
+            fontSize: 14,
         },
         [theme.breakpoints.up('lg')]: {
-            fontSize: 23,
+            fontSize: 14,
         },
         textAlign: 'left'
     },
@@ -42,34 +44,34 @@ const useStyles = makeStyles((theme) => ({
             fontSize: 14,
         },
         [theme.breakpoints.up('md')]: {
-            fontSize: 13,
+            fontSize: 14,
         },
         [theme.breakpoints.up('lg')]: {
-            fontSize: 20,
+            fontSize: 14,
         },
         fontStyle: 'italic',
-        textAlign: 'left'
+        textAlign: 'left',
     }
   }));
 
-export default function BookCard({
-    book
-}){
+export default function BookCard(props){
     const classes = useStyles();
     const history = useHistory();
+    const book = props.book
     const onClickBook = useCallback((e) => {
         e.preventDefault();
         history.push(`/book/${book.id}`)
     }, [history, book]);
     return(
         <Card className = {classes.root} onClick={onClickBook} style={{cursor:'pointer'}} >
-            <CardActionArea>
+            <CardActionArea style={{height:'100%'}}>
                 <CardMedia
                     component="img"
                     className={classes.image}
                     alt="Libro"
                     image="https://images.freeimages.com/images/premium/previews/1461/1461865-old-worn-book.jpg"
                     title="Contemplative Reptile"
+                    height = {props.setHeight}
                 />
                 <CardContent className={classes.content} xs zeroMinWidth>
                     <Typography noWrap className = {classes.title} gutterBottom variant="bold" component="h2">

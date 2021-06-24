@@ -4,6 +4,8 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
 import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Typography, Paper } from "@material-ui/core";
+
 import BookGrid from "./BookGrid";
 import BookImageGrid from "./BookImageGrid";
 
@@ -11,16 +13,60 @@ import BookImageGrid from "./BookImageGrid";
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: 'auto',
+        marginTop: 56,
+        [theme.breakpoints.up('sm')]: {
+            marginTop: 64,
+        },
         background: 'white',
         border: 0,
         borderRadius: 3,
-        width: '90%',
-        display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        overflow: 'hidden',
         backgroundColor: theme.palette.background.paper,
-    }
+    },
+    gridContainer:{
+        width: '90%',
+        margin: 'auto',
+        padding: 20,
+        borderBottom: '1px solid lightgray',
+        background: 'white',
+    },
+    imagesContainer:{
+        [theme.breakpoints.up('sm')]: {
+            position: 'sticky',
+        },
+        margin: 0,
+        top: 64,
+    },
+    detailsContainer:{
+        padding: 15,
+        borderRadius: 15,
+        border: '1px solid lightgray',
+    },
+    titleDesktop:{
+        display: 'block',
+        [theme.breakpoints.down('xs')]: {
+            display: 'none'
+        },
+    },
+    titleMobile:{
+        [theme.breakpoints.up('sm')]: {
+            display: 'none'
+        },
+    },
+    bookCarousel:{
+        width: '80vw',
+        margin: 'auto',
+        marginTop: 30,
+        marginBottom: 45,
+        background: 'lightgray',
+        overflow: 'hidden',
+        borderRadius: 15,
+    },
+    carouselPaper:{
+        fontSize: 20,
+        padding: 5
+    },
   }));
 
 export default function BookScreen(){
@@ -97,23 +143,41 @@ export default function BookScreen(){
 
     return (
 
-        <div className="book-screen">
-            <div className="book">
-                <h1>{book.title}</h1>
-                <BookImageGrid main={mainImage} images={images} />
-                <p><strong>Autor: </strong>{book.author}</p>
-                <div className="description-field">
-                <p>{book.description?<strong>Descripción:</strong>:<i>No hay descripción</i>}</p>
-                <p>{book.description}</p>
-                </div>
+        <div className={classes.root}>
+            <div className={classes.gridContainer}>
+                
+                <Grid container alignItems='flex-start' spacing={5}>
+                  
+                    <Grid className={classes.imagesContainer} height='100%' item xs={12} sm={8}>
+                        <div className={classes.titleMobile}>
+                            <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
+                            <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
+                        </div>
+                        <BookImageGrid main={mainImage} images={images}/>
+
+                    </Grid>
+                    <Grid className={classes.imagesContainer} height='100%' item xs={12} sm={4}>
+                        <div className={classes.detailsContainer}>
+                            <div className={classes.titleDesktop}>
+                                <Typography variant={'h5'} align={'left'}><b>{book.title}</b></Typography>
+                                <Typography variant={'subtitle1'} align={'left'}><b>Autor: </b>{book.author}</Typography>
+                            </div>
+                            <Typography variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>
+                            <Typography variant={'subtitle1'} align={'left'}><b>Orígen: </b>ORIGEN</Typography>
+                            <Typography variant={'subtitle1'} align={'left'}><b>Publicado por: </b> {user.alias}</Typography>
+                            <div>
+                            <Typography variant={'h6'} align={'left'}><strong>Descripción:</strong></Typography>
+                            <Typography variant={'body1'} align={'left'}>{book.description? book.description : <i>No hay descripción</i>}</Typography>
+                            </div>
+                        </div>
+                    </Grid>
+                </Grid>
                 <br/>
             </div>
-            <div className={classes.root} width="80%">
-            <p>otros libros de <strong onClick = {onClickUser}>{user.alias}</strong></p>
-            
-            {loaded && <BookGrid books={books}/>}
-
-            </div>
+            <Grid container className={classes.bookCarousel} spacing={0}>
+            <Grid item xs={12}><Paper square className={classes.carouselPaper} elevation={3}> otros libros de <b onClick = {onClickUser}>{user.alias}</b></Paper></Grid>
+            <Grid item xs={12}>{loaded && <BookGrid books={books}/>}</Grid>
+            </Grid>
         </div>
 
     )
