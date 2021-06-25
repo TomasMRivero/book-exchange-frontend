@@ -9,13 +9,15 @@ import BookScreen from './components/Book/BookScreen';
 import UserScreen from './components/user/userScreen';
 import Nav from './components/Nav';
 import MainScreen from './components/MainScreen';
+import { Container } from '@material-ui/core';
 export default function App() {
   return (
     
     <div className="App">
-      <BrowserRouter >
+      <BrowserRouter>
         
-        <Nav />     
+        <Nav />
+        <Container maxWidth="md" style={{background: "#fff", minHeight:'100vh', paddingBottom: 45}}>
         <Switch >
           <Route exact path="/" component={MainScreen} />
           <Route path="/book/search/:field" component={BookSearchResults} />
@@ -23,7 +25,8 @@ export default function App() {
           <Route path="/book/:id" component={BookScreen} />
           <Route path="/book" component={BookUploadScreen} />
           <Route path="/user/:id" component={UserScreen} />
-      </Switch>
+        </Switch>
+        </Container>
       </BrowserRouter>
     </div>
   );

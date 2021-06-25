@@ -17,22 +17,19 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.up('sm')]: {
             marginTop: 64,
         },
-        background: 'white',
         border: 0,
         borderRadius: 3,
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        backgroundColor: theme.palette.background.paper,
     },
     gridContainer:{
         width: '90%',
         margin: 'auto',
         padding: 20,
         borderBottom: '1px solid lightgray',
-        background: 'white',
     },
     imagesContainer:{
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             position: 'sticky',
         },
         margin: 0,
@@ -45,20 +42,20 @@ const useStyles = makeStyles((theme) => ({
     },
     titleDesktop:{
         display: 'block',
-        [theme.breakpoints.down('xs')]: {
+        [theme.breakpoints.down('sm')]: {
             display: 'none'
         },
     },
     titleMobile:{
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             display: 'none'
         },
+        marginBottom: 15
     },
     bookCarousel:{
-        width: '80vw',
+        width: '90%',
         margin: 'auto',
         marginTop: 30,
-        marginBottom: 45,
         background: 'lightgray',
         overflow: 'hidden',
         borderRadius: 15,
@@ -148,7 +145,7 @@ export default function BookScreen(){
                 
                 <Grid container alignItems='flex-start' spacing={5}>
                   
-                    <Grid className={classes.imagesContainer} height='100%' item xs={12} sm={8}>
+                    <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
                         <div className={classes.titleMobile}>
                             <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
                             <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
@@ -156,7 +153,7 @@ export default function BookScreen(){
                         <BookImageGrid main={mainImage} images={images}/>
 
                     </Grid>
-                    <Grid className={classes.imagesContainer} height='100%' item xs={12} sm={4}>
+                    <Grid className={classes.imagesContainer} height='100%' item xs={12} md={4}>
                         <div className={classes.detailsContainer}>
                             <div className={classes.titleDesktop}>
                                 <Typography variant={'h5'} align={'left'}><b>{book.title}</b></Typography>

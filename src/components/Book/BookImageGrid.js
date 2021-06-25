@@ -28,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
         transform: 'translateZ(0)',
         display: 'inline-block',
         fontSize: 0,
+        '&::-webkit-scrollbar': {
+            width: 0
+        }
     },
     gridListImg:{
         transition: ".3s ease",
@@ -42,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
         opacity: 1,
         '&:hover':{
             opacity: 0.5
-        }
+        },
     },
     mainImg:{
         maxHeight: '60vh',
@@ -66,11 +69,11 @@ export default function BookImageGrid(props) {
             
             <Grid className={classes.grid} container spacing={2} >
 
-                <Grid item xs={10} sm={10} md={11} >
+                <Grid item xs={10} sm={10}  >
                     <img className={classes.mainImg} src={shown} />
                 </Grid>
 
-                <Grid item xs={2} sm={2} md={1} container className={classes.gridListContainer}>
+                <Grid item xs={2} sm={2}  container className={classes.gridListContainer}>
                     <GridList className={classes.gridList} spacing={0} cols={1} cellHeight={'auto'} >
                         {images.map(i=>
                             <img className={classes.gridListImg} src={i} onClick={() => setShown(i)}  />    

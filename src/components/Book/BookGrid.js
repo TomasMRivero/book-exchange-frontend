@@ -24,17 +24,16 @@ export default function BookGrid(props){
     console.log({width});
 
     const setCols = (width) => {
-        if (width < 600){
-            return 2
-        }else if(width < 780){
-            return 3
-        }else if(width < 960){
-            return 4
-        }else if(width < 1140){
+        if (width >= 960){
             return 5
-        }else{
-            return 6
+        }else if(width >= 600){
+            return 3
         }
+        return 2
+    }
+
+    const setHeight = (width, setCols) => {
+        return (width<=960?width/setCols(width):960/setCols(960));
     }
 
     return(
@@ -44,7 +43,7 @@ export default function BookGrid(props){
                         <BookCard
                             key = {book.id}
                             book = {book}
-                            setHeight = {width / setCols(width)}
+                            setHeight = {setHeight}
                         />
                     </GridListTile>
                 )}

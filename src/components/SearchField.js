@@ -7,7 +7,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     search: {
-        width: '70vw',
+        width: '70%',
         marginRight: theme.spacing(2),
         marginLeft: 0,
         display: 'flex',
