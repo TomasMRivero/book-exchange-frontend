@@ -99,6 +99,7 @@ export default function BookItem({
                             name="customized-empty"
                             defaultValue={3.5}
                             precision={0.5}
+                            size = {'medium'}
                             emptyIcon={ <StarBorder fontSize="inherit" />}
                             readOnly
                         />

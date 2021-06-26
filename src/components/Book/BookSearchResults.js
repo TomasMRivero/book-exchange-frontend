@@ -102,7 +102,7 @@ export default function BookSearchResults({location}){
     useEffect(() => {
         fetch();
         return function cleanup() {
-            console.log("limpiando")
+            console.log("limpiando");
         };
     }, [location, dispatch]);
 

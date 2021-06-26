@@ -1,12 +1,18 @@
 import { useCallback } from "react"
 import { useHistory } from "react-router"
 import SearchField from "./SearchField"
+import { makeStyles } from "@material-ui/core/styles"
+
+const useStyles = makeStyles((theme) => ({
+    
+}))
 
 export default function MainScreen(){
+    const classes = useStyles();
     const history = useHistory()
     const onClickUploadBook = useCallback((e) => {
         history.push('/book');
-    }, [history])
+    }, [history]);
     return(
         <div className="MainScreen">
             <br />

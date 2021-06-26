@@ -10,15 +10,26 @@ import UserScreen from './components/user/userScreen';
 import Nav from './components/Nav';
 import MainScreen from './components/MainScreen';
 import { Container } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import ScrollToTop from './components/ScrollToTop';
+const useStyles = makeStyles((theme) => ({
+  root:{
+    background: "#fff",
+    minHeight:'100vh',
+    padding: 0,
+    paddingBottom: 45,
+  }
+}));
+
 export default function App() {
+  const classes=useStyles();
   return (
     
     <div className="App">
       <BrowserRouter>
         
         <Nav />
-        <Container maxWidth="md" style={{background: "#fff", minHeight:'100vh', paddingBottom: 45}}>
+        <Container maxWidth="md" className={classes.root}>
         <ScrollToTop />
         <Switch >
           <Route exact path="/" component={MainScreen} />
