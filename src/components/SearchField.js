@@ -7,9 +7,9 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     search: {
-        width: '70%',
-        marginRight: theme.spacing(2),
-        marginLeft: 0,
+        transition: ".3s ease",
+        width: '100%',
+        margin: 'auto',
         display: 'flex',
         position: 'relative',
         padding: '5px',
@@ -21,8 +21,6 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
-        marginRight: theme.spacing(2),
-        marginLeft: 0,
     },
     IconButton:{
         padding: theme.spacing(0),
@@ -46,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
       width: '100%'
     },
     selectContainer:{
+        transition: ".3s ease",
         height: '100%',
         display: 'flex',
         flexGrow: 1,

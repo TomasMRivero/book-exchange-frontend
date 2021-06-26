@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
         search: {
             color: 'inherit',
             width: '100%',
+            [theme.breakpoints.up('sm')]: {
+                width: '70%'
+            },
         },
         iconContaier:{
             display: 'flex',
@@ -26,9 +29,13 @@ const useStyles = makeStyles((theme) => ({
         }
 }));
 
-function ShowSearchBar({match}) {
-    if (!match.isExact){
-        return <SearchField />;
+function ShowSearchBar(props) {
+    if (!props.match.isExact){
+        return(
+            <div className={props.className}>
+            <SearchField />
+            </div>
+        );
     }
     return null
 }
@@ -57,7 +64,7 @@ export default function Nav(){
                     >
                         <Home />
                     </IconButton>
-                    <ShowSearchBar className={classes.search} nav={1} match = {match} style={{width:'50vw'}}/>
+                    <ShowSearchBar className={classes.search} nav={1} match = {match}/>
                     <div className={classes.iconContaier}>
                         <IconButton edge="end" className = {classes.userIcon}>
                             <AccountCircle />
