@@ -10,6 +10,7 @@ import UserScreen from './components/user/userScreen';
 import Nav from './components/Nav';
 import MainScreen from './components/MainScreen';
 import { Container } from '@material-ui/core';
+import ScrollToTop from './components/ScrollToTop';
 export default function App() {
   return (
     
@@ -18,6 +19,7 @@ export default function App() {
         
         <Nav />
         <Container maxWidth="md" style={{background: "#fff", minHeight:'100vh', paddingBottom: 45}}>
+        <ScrollToTop />
         <Switch >
           <Route exact path="/" component={MainScreen} />
           <Route path="/book/search/:field" component={BookSearchResults} />

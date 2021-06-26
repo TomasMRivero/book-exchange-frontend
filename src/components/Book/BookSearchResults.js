@@ -4,11 +4,61 @@ import { useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
-
+import { Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import BookItem from './BookItem';
 
+const useStyles = makeStyles((theme) => ({
+    root:{
+        margin: 'auto',
+        marginTop: 56,
+        [theme.breakpoints.up('sm')]: {
+            marginTop: 64,
+        },
+    },
+    header:{
+        margin: 'auto',
+        padding: 20,
+    },
+    title:{
+        fontWeight: "bold",
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 18,
+        },
+    },
+    resultList:{
+        width: '100%',
+        border: '1px solid #f0f0f0',
+        borderRadius: 10
+    }
+}));
+
+
+function Result({books, value, classes, users, loaded}){
+    if(books.length > 0){
+        return (
+            <div className={classes.resultList}>
+            {loaded && books.map(book =>
+                <BookItem
+                    className = {classes.listItem}
+                    key = {book.id}
+                    book = {book}
+                    owner = {users[book.user_account_id]}
+                />
+            )}
+            </div>
+        );
+    }
+    return(
+        <div>
+            <p>No se hallaron resultados para {value.q}</p>
+        </div>
+    )
+}
+
+
 export default function BookSearchResults({location}){
-    console.log("results")
+    const classes = useStyles();
     const dispatch = useDispatch();
     const value = QueryString.parse(location.search, { ignoreQueryPrefix: true, parameterLimit: 1 });
     const field = useParams().field
@@ -55,33 +105,14 @@ export default function BookSearchResults({location}){
             console.log("limpiando")
         };
     }, [location, dispatch]);
-    
-    function NoResult(){
-        if(books.length > 0){
-            return null;
-        }
-        return(
-            <div>
-                <p>No se hallaron resultados para {value.q}</p>
-            </div>
-        )
-    }
 
     return(
-        <div className="BookSearchResults">
-            <div className="section-header">
-                <h1>LIBROS</h1>
-                <h5>Resultado de la búsqueda:</h5>
+        <div className={classes.root}>
+            <div className={classes.header}>
+                <Typography className={classes.title} variant='h5'>Resultado de la búsqueda:</Typography>
             </div>
-
-            {loaded && books.map(book =>
-                <BookItem
-                    key = {book.id}
-                    book = {book}
-                    owner = {users[book.user_account_id]}
-                />
-            )}
-            <NoResult/>
+            
+            <Result books={books} value={value} classes={classes} users={users} loaded={loaded}/>
 
         </div>
     )

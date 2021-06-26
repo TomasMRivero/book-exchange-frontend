@@ -137,7 +137,6 @@ export default function BookScreen(){
     console.log(book);
     console.log(books);
     console.log(user);
-
     return (
 
         <div className={classes.root}>
@@ -177,5 +176,5 @@ export default function BookScreen(){
             </Grid>
         </div>
 
-    )
+    )    
 };
