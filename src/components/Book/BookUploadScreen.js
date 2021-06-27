@@ -1,11 +1,8 @@
-import ky from "ky";
+import axios from "axios";
 import { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import SearchField from "../SearchField";
 
 export default function BookUploadScreen (){
-    const dispatch = useDispatch();
     const history = useHistory();
     const [error, setError] = useState(null);
 
@@ -34,25 +31,20 @@ export default function BookUploadScreen (){
         e.preventDefault();
 
         async function post() {
-            try{
-                const book = await ky.post('http://localhost:4000/book', {
-                    json: {
+                await axios.post('http://localhost:4000/book', {
                         user_account_id : userId,
                         title,
                         author,
                         description
-                    }
-                }).json();
                 
-                console.log(book);
-                setError(null)
-                history.push(`/book/${book.id}`);
-            }catch (err) {
-                console.log(err);
-                const body = await err.response.json();
-                console.log(body);
-                setError(body);
-            }
+                }).then(response => {
+                    setError(null)
+                    history.push(`/book/${response.data.id}`);
+                }).catch(error => {
+                    if (error.response){
+                        console.log(error.response);
+                    }
+                });
         }
         post()
     }, [userId, title, author, description, history]);

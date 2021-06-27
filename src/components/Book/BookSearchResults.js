@@ -1,5 +1,5 @@
 import QueryString from "qs";
-import ky from "ky";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
@@ -72,31 +72,41 @@ export default function BookSearchResults({location}){
     const[loaded, setLoaded] = useState(false)
 
     async function fetch() {
-        try{
-            const [books, users] = await Promise.all([
-                ky.get(`http://localhost:4000/book/search/${field}?q=${value.q}`).json(),
-                ky.get('http://localhost:4000/user').json()
-            ]);
-
-            batch(() => {
-                dispatch(
-                    showBookListIDs(books.map(b => b.id).reverse())
-                );
-                dispatch(
-                    showBookList(books)
-                );
-                dispatch(
-                    showUserList(users)
-                );
-                dispatch(
-                    showUserListIDs(users.map(u => u.id).reverse())
-                );
-            })
-
-            setLoaded(true);
-        }catch(err){
-            console.log("error al conectarse al servidor");
+        async function getBooks() {
+            return await axios.get(`http://localhost:4000/book/search/${field}?q=${value.q}`);
         }
+        async function getUsers() {
+            return await axios.get('http://localhost:4000/user');
+        }
+        Promise.all([getBooks(), getUsers()])
+            .then(results => {
+                const books = results[0];
+                const users = results[1];
+
+                if (books.status===204){
+                    books.data = []
+                }
+                batch(() => {
+                    dispatch(
+                        showBookListIDs(books.data.map(b => b.id).reverse())
+                    );
+                    dispatch(
+                        showBookList(books.data)
+                    );
+                    dispatch(
+                        showUserList(users.data)
+                    );
+                    dispatch(
+                        showUserListIDs(users.data.map(u => u.id).reverse())
+                    );
+                })
+    
+                setLoaded(true);
+            }).catch((error) => {
+                if (error.response){
+                    console.error(error.response)
+                }
+            });
     }
     
     useEffect(() => {

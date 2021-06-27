@@ -1,4 +1,4 @@
-import ky from "ky";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
@@ -64,33 +64,38 @@ export default function UserScreen(){
 
     const[loaded, setLoaded] = useState('false');
     async function fetch() {
-        try {
-            const [ user, books] = await Promise.all([
-                ky.get(`http://localhost:4000/user/${userID}`).json(),
-                ky.get(`http://localhost:4000/book/`).json(),
-            ]);
-
-            batch(() => {
-                dispatch(showUser(user));
-
-                dispatch(showBookList(books));
-                dispatch(showBookListIDs(books.filter(b => b.user_account_id === userID).map(b => b.id).reverse()));
-
-                dispatch(showUserList([user]));
-                dispatch(showUserListIDs([userID]));
-
-                setLoaded(true);
-            });
-
-        } catch (err) {
-            console.log(err);
+        async function getUserById(){
+            return await axios.get(`http://localhost:4000/user/${userID}`);
         }
+        async function getBooks(){
+            return await axios.get('http://localhost:4000/book/');
+        }
+        Promise.all([getUserById(), getBooks()])
+            .then(results =>{
+                const user = results[0];
+                const books = results[1];
+
+                batch(() => {
+                    dispatch(showUser(user.data));
+    
+                    dispatch(showBookList(books.data));
+                    dispatch(showBookListIDs(books.data.filter(b => b.user_account_id === userID).map(b => b.id).reverse()));
+    
+                    dispatch(showUserList([user.data]));
+                    dispatch(showUserListIDs([userID.data]));
+                });
+    
+                setLoaded(true);
+            }).catch(error => {
+                if(error.response){
+                    console.error(error.response);
+                }
+            });
     }
 
     useEffect(() => {
         fetch();
         return function cleanup() {
-            return ky.stop;
         };
 
     }, [userID, dispatch]);

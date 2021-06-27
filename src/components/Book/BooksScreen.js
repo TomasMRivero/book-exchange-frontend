@@ -1,4 +1,4 @@
-import ky from 'ky-universal';
+import axios from "axios";
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector, batch } from 'react-redux';
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from '../../redux/actions';
@@ -18,31 +18,44 @@ export default function BooksScreen() {
     
     const[loaded, setLoaded] = useState(false)
 
-    useEffect(() => {
-        async function fetch() {
-            const [books, users] = await Promise.all([
-                ky.get('http://localhost:4000/book').json(),
-                ky.get('http://localhost:4000/user').json()
-            ]);
-
-            batch(() => {
-                dispatch(
-                    showBookList(books)
-                );
-                dispatch(
-                    showBookListIDs(books.map(b => b.id).reverse())
-                );
-                dispatch(
-                    showUserList(users)
-                );
-                dispatch(
-                    showUserListIDs(users.map(u => u.id).reverse())
-                );
-            });
-            
+    async function fetch() {
+        async function getBooks(){
+            return await axios.get('http://localhost:4000/book');
         }
 
-        setLoaded(true);
+        async function getUsers(){
+            return await axios.get('http://localhost:4000/user');
+        }
+
+        Promise.all([getBooks(), getUsers()])
+            .then(results => {
+                const books = results[0];
+                const users = results[1];
+                
+                batch(() => {
+                    dispatch(
+                        showBookList(books.data)
+                    );
+                    dispatch(
+                        showBookListIDs(books.data.map(b => b.id).reverse())
+                    );
+                    dispatch(
+                        showUserList(users.data)
+                    );
+                    dispatch(
+                        showUserListIDs(users.data.map(u => u.id).reverse())
+                    );
+                });
+                setLoaded(true);
+                
+            }).catch(error => {
+                if (error.response){
+                    console.error(error.response);
+                }
+            });            
+    }
+
+    useEffect(() => {
         fetch();
         return function cleanup() {
             console.log("limpiando")

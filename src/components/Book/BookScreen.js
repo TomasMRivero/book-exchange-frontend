@@ -1,4 +1,4 @@
-import ky from "ky-universal";
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
@@ -80,44 +80,49 @@ export default function BookScreen(){
     const books = useSelector(state => bookIDs.map(id => state.models.books[id]));
     
     const userIDs = useSelector(state => state.ui.users);
-    const users = useSelector(state => userIDs.map(id => state.models.users[id]));
     
     const[loaded, setLoaded] = useState(false);
     async function fetch() {
-        try{
-            const [book, books, users] = await Promise.all([
-                ky.get(`http://localhost:4000/book/${bookID}`).json(),
-                ky.get(`http://localhost:4000/book/`).json(),
-                ky.get('http://localhost:4000/user').json()
-            ]);
-
-            
-            batch(() => {
-                dispatch(showBook(book));
-
-                dispatch(showUser(users.find(u => u.id === book.user_account_id)));
-
-                dispatch(showBookList(books));
-                dispatch(showBookListIDs(books.filter(b => b.user_account_id === book.user_account_id && b.id !== bookID).map(b => b.id).reverse()));
-
-                dispatch(showUserList(users));
-                dispatch(showUserListIDs(users.map(u => u.id).reverse()));
-
-                setLoaded(true);
-            });
-        }catch(err){
-            console.log(err)
+        async function getBook() {
+            return await axios.get(`http://localhost:4000/book/${bookID}`);
         }
+        async function getBooks() {
+            return await axios.get(`http://localhost:4000/book`);
+        }
+        async function getUsers() {
+            return await axios.get('http://localhost:4000/user');
+        }
+
+        Promise.all([getBook(), getBooks(), getUsers()])
+            .then( results => {
+                const book = results[0];
+                const books = results[1];
+                const users = results[2];
+
+                batch(() => {
+                    dispatch(showBook(book.data));
+    
+                    dispatch(showUser(users.data.find(u => u.id === book.user_account_id)));
+    
+                    dispatch(showBookList(books.data));
+                    dispatch(showBookListIDs(books.data.filter(b => b.user_account_id === book.user_account_id && b.id !== bookID).map(b => b.id).reverse()));
+    
+                    dispatch(showUserList(users.data));
+                    dispatch(showUserListIDs(users.data.map(u => u.id).reverse()));
+    
+                    setLoaded(true);
+                });
+            }).catch(error => {
+                if (error.response){
+                    console.error(error.response);
+                }
+            });
     }
 
     useEffect(() => {
-        
         fetch()
-    
-        console.log("fetched");
         return function cleanup() {
             console.log("limpiando");
-            return ky.stop;
         };
     }, [bookID, dispatch]);
 
@@ -133,10 +138,6 @@ export default function BookScreen(){
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsqp64xwGXFNJnAoAymzSciNWnf8u9Sptvrw&usqp=CAU",
         "https://static4.depositphotos.com/1006472/361/i/950/depositphotos_3614368-stock-photo-blank-book.jpg",
     ]
-
-    console.log(book);
-    console.log(books);
-    console.log(user);
     return (
 
         <div className={classes.root}>
