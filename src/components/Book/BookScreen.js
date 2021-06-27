@@ -4,10 +4,11 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Paper } from "@material-ui/core";
+import { Grid, Typography, Paper, ClickAwayListener, Snackbar } from "@material-ui/core";
 
 import BookGrid from "./BookGrid";
 import BookImageGrid from "./BookImageGrid";
+import { Alert } from "@material-ui/lab";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 3,
         flexWrap: 'wrap',
         justifyContent: 'space-around',
+        overflowX:'hidden'
     },
     gridContainer:{
         width: '90%',
@@ -78,10 +80,12 @@ export default function BookScreen(){
 
     const bookIDs = useSelector(state => state.ui.books);
     const books = useSelector(state => bookIDs.map(id => state.models.books[id]));
-    
-    const userIDs = useSelector(state => state.ui.users);
-    
+        
     const[loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [ message, setMessage ] = useState(null);
+    
     async function fetch() {
         async function getBook() {
             return await axios.get(`http://localhost:4000/book/${bookID}`);
@@ -110,12 +114,15 @@ export default function BookScreen(){
                     dispatch(showUserList(users.data));
                     dispatch(showUserListIDs(users.data.map(u => u.id).reverse()));
     
+                    setError(null);
                     setLoaded(true);
                 });
             }).catch(error => {
                 if (error.response){
-                    console.error(error.response);
+                    setError(error.response.data);
+                    setMessage(error.response.data.message);
                 }
+                setOpen(true)
             });
     }
 
@@ -126,7 +133,11 @@ export default function BookScreen(){
         };
     }, [bookID, dispatch]);
 
-    console.log(user.data);
+    
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     const onClickUser = useCallback((e) => {
         history.push(`/user/${user.id}`);
     })
@@ -139,9 +150,18 @@ export default function BookScreen(){
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsqp64xwGXFNJnAoAymzSciNWnf8u9Sptvrw&usqp=CAU",
         "https://static4.depositphotos.com/1006472/361/i/950/depositphotos_3614368-stock-photo-blank-book.jpg",
     ]
+
+    
     return (
 
         <div className={classes.root}>
+            
+            <ClickAwayListener onClickAway={handleClose}>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
+                </Snackbar>
+            </ClickAwayListener>
+
             <div className={classes.gridContainer}>
                 
                 <Grid container alignItems='flex-start' spacing={5}>

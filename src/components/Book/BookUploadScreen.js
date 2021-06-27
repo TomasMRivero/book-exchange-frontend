@@ -1,10 +1,13 @@
 import axios from "axios";
 import { useCallback, useState } from "react";
 import { useHistory } from "react-router";
-
+import { ClickAwayListener, Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 export default function BookUploadScreen (){
     const history = useHistory();
     const [error, setError] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [ message, setMessage ] = useState(null)
 
     const [userId, setUserId] = useState('');
     const onChangeUserId = useCallback((e) => {
@@ -38,20 +41,32 @@ export default function BookUploadScreen (){
                         description
                 
                 }).then(response => {
-                    setError(null)
+                    setError(null);
                     history.push(`/book/${response.data.id}`);
                 }).catch(error => {
                     if (error.response){
-                        console.log(error.response);
+                        setError(error.response.data);
+                        setMessage(error.response.data.message);
                     }
+                    setOpen(true)
                 });
         }
         post()
     }, [userId, title, author, description, history]);
 
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return(
 
         <div className ="upload-book-screen">
+
+            <ClickAwayListener onClickAway={handleClose}>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
+                </Snackbar>
+            </ClickAwayListener>
 
             <div className="section-header">
                 <h1>LIBROS</h1>

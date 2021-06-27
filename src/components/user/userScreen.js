@@ -4,8 +4,9 @@ import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUser, showUserList, showUserListIDs } from "../../redux/actions";
 import BookItem from "../Book/BookItem";
-import { Avatar, Typography, Grid } from "@material-ui/core";
+import { Avatar, Typography, Grid, ClickAwayListener, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -63,6 +64,10 @@ export default function UserScreen(){
     const books = useSelector(state => bookIDs.map(id => state.models.books[id]));
 
     const[loaded, setLoaded] = useState('false');
+    const [error, setError] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [ message, setMessage ] = useState(null);
+
     async function fetch() {
         async function getUserById(){
             return await axios.get(`http://localhost:4000/user/${userID}`);
@@ -85,11 +90,14 @@ export default function UserScreen(){
                     dispatch(showUserListIDs([userID.data]));
                 });
     
+                setError(null);
                 setLoaded(true);
             }).catch(error => {
                 if(error.response){
-                    console.error(error.response);
-                }
+                        setError(error.response.data);
+                        setMessage(error.response.data.message);
+                    }
+                setOpen(true);
             });
     }
 
@@ -100,8 +108,19 @@ export default function UserScreen(){
 
     }, [userID, dispatch]);
 
+    const handleClose = () => {
+        setOpen(false);
+    };
+    
     return(
         <div className = {classes.root}>
+
+            <ClickAwayListener onClickAway={handleClose}>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
+                </Snackbar>
+            </ClickAwayListener>
+            
             {loaded && <>
                 <Grid container className={classes.user} alignItems="center" spacing={3}>
 

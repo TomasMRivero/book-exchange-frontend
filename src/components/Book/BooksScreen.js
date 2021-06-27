@@ -1,8 +1,9 @@
+import { ClickAwayListener, Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector, batch } from 'react-redux';
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from '../../redux/actions';
-
 
 
 import BookItem from './BookItem';
@@ -16,7 +17,10 @@ export default function BooksScreen() {
     const userIDs = useSelector(state => state.ui.users);
     const users = useSelector(state => userIDs.map(id => state.models.users[id]));
     
-    const[loaded, setLoaded] = useState(false)
+    const[loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [ message, setMessage ] = useState(null);
 
     async function fetch() {
         async function getBooks(){
@@ -46,12 +50,15 @@ export default function BooksScreen() {
                         showUserListIDs(users.data.map(u => u.id).reverse())
                     );
                 });
+                setError(null);
                 setLoaded(true);
                 
             }).catch(error => {
                 if (error.response){
-                    console.error(error.response);
+                    setError(error.response.data);
+                    setMessage(error.response.data.message);
                 }
+                setOpen(true)
             });            
     }
 
@@ -62,9 +69,20 @@ export default function BooksScreen() {
         };
     }, [dispatch]);
 
-    return (
+    
+    const handleClose = () => {
+        setOpen(false);
+    };
 
+    return (
         <div className="BooksScreen">
+
+            <ClickAwayListener onClickAway={handleClose}>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
+                </Snackbar>
+            </ClickAwayListener>
+
             <div className="section-header">
                 <h1>LIBROS</h1>
                 <h5>Lista de libros</h5>

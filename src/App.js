@@ -1,6 +1,6 @@
 import './App.css';
 
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route, useLocation, useHistory } from 'react-router-dom'
 
 import BooksScreen from './components/Book/BooksScreen';
 import BookSearchResults from './components/Book/BookSearchResults';
@@ -21,27 +21,28 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
+
 export default function App() {
   const classes=useStyles();
+  let location = useLocation();
+  console.log(location.pathname);
   return (
     
-    <div className="App">
-      <BrowserRouter>
-        
+    <div className="App">        
         <Nav />
         
         <Route exact path="/" component={MainScreen} />
         <ScrollToTop />
-          <Container maxWidth="md" className={classes.root}>
-            <Switch >
-              <Route path="/book/search/:field" component={BookSearchResults} />
-              <Route path="/book/showall" component={BooksScreen} />
-              <Route path="/book/:id" component={BookScreen} />
-              <Route path="/book" component={BookUploadScreen} />
-              <Route path="/user/:id" component={UserScreen} />
-          </Switch>
-        </Container>
-      </BrowserRouter>
+        {location.pathname !== "/" && <Container maxWidth="md" className={classes.root} >
+          <Switch >
+            <Route path="/book/search/:field" component={BookSearchResults} />
+            <Route path="/book/showall" component={BooksScreen} />
+            <Route path="/book/:id" component={BookScreen} />
+            <Route path="/book" component={BookUploadScreen} />
+            <Route path="/user/:id" component={UserScreen} />
+        </Switch>
+      </Container>}
     </div>
   );
 }

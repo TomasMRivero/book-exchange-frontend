@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
-import { Typography } from "@material-ui/core";
+import { ClickAwayListener, Snackbar, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import BookItem from './BookItem';
+import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -69,7 +70,10 @@ export default function BookSearchResults({location}){
     const userIDs = useSelector(state => state.ui.users);
     const users = useSelector(state => userIDs.map(id => state.models.users[id]));
 
-    const[loaded, setLoaded] = useState(false)
+    const[loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [ message, setMessage ] = useState(null);
 
     async function fetch() {
         async function getBooks() {
@@ -101,11 +105,14 @@ export default function BookSearchResults({location}){
                     );
                 })
     
+                setError(null);
                 setLoaded(true);
             }).catch((error) => {
                 if (error.response){
-                    console.error(error.response)
-                }
+                        setError(error.response.data);
+                        setMessage(error.response.data.message);
+                    }
+                setOpen(true);
             });
     }
     
@@ -116,8 +123,19 @@ export default function BookSearchResults({location}){
         };
     }, [location, dispatch]);
 
+    
+    const handleClose = () => {
+        setOpen(false);
+    };
     return(
         <div className={classes.root}>
+            
+            <ClickAwayListener onClickAway={handleClose}>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
+                </Snackbar>
+            </ClickAwayListener>
+            
             <div className={classes.header}>
                 <Typography className={classes.title} variant='h5'>Resultado de la búsqueda:</Typography>
             </div>

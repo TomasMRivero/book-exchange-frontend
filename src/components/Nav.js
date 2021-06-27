@@ -1,10 +1,10 @@
 'use strict'
-import { AppBar, Toolbar, IconButton, Slide, useScrollTrigger } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton } from '@material-ui/core';
 import { Home, AccountCircle  } from '@material-ui/icons';
 import { useHistory, useRouteMatch } from "react-router";
 import SearchField from "./SearchField";
 import { useCallback } from 'react';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
         grow: {
