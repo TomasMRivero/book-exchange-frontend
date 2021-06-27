@@ -7,6 +7,7 @@ import BookItem from "../Book/BookItem";
 import { Avatar, Typography, Grid, ClickAwayListener, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Alert } from "@material-ui/lab";
+import NotFound from "../NotFound";
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -67,6 +68,7 @@ export default function UserScreen(){
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
     const [ message, setMessage ] = useState(null);
+    const [ notFound, setNotFound ] = useState(false)
 
     async function fetch() {
         async function getUserById(){
@@ -93,11 +95,14 @@ export default function UserScreen(){
                 setError(null);
                 setLoaded(true);
             }).catch(error => {
-                if(error.response){
-                        setError(error.response.data);
-                        setMessage(error.response.data.message);
+                if (error.response){
+                    if (error.response.status === 404){
+                        setNotFound(true);
                     }
-                setOpen(true);
+                    setError(error.response.data);
+                    setMessage(error.response.data.message);
+                }
+                setOpen(()=>{return (error.response.status !== 404?true:false)})
             });
     }
 
@@ -120,15 +125,15 @@ export default function UserScreen(){
                     <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
                 </Snackbar>
             </ClickAwayListener>
-            
-            {loaded && <>
+
+            {loaded && !notFound && <>
                 <Grid container className={classes.user} alignItems="center" spacing={3}>
 
                     <Grid className={classes.avatarContainer} item xs={5} sm={12}>
                     <Avatar
                         className={classes.avatar}
                         alt={user.name}
-                        src="htstps://s03.s3c.es/imag/_v0/770x420/7/6/f/GettyImages-522796439.jpg"
+                        src=""
                     />
                     </Grid>
 
@@ -154,6 +159,7 @@ export default function UserScreen(){
                     )}
                 </div>}
             </>}
+            {notFound && <NotFound target="el usuario"/>}
         </div>
     )
 }

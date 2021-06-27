@@ -12,6 +12,7 @@ import MainScreen from './components/MainScreen';
 import { Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ScrollToTop from './components/ScrollToTop';
+import NotFound from './components/NotFound';
 const useStyles = makeStyles((theme) => ({
   root:{
     background: "#fff",
@@ -26,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes=useStyles();
   let location = useLocation();
-  console.log(location.pathname);
   return (
     
     <div className="App">        
@@ -41,6 +41,7 @@ export default function App() {
             <Route path="/book/:id" component={BookScreen} />
             <Route path="/book" component={BookUploadScreen} />
             <Route path="/user/:id" component={UserScreen} />
+            <Route component = {NotFound} />
         </Switch>
       </Container>}
     </div>

@@ -9,6 +9,7 @@ import { Grid, Typography, Paper, ClickAwayListener, Snackbar } from "@material-
 import BookGrid from "./BookGrid";
 import BookImageGrid from "./BookImageGrid";
 import { Alert } from "@material-ui/lab";
+import NotFound from "../NotFound";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -85,6 +86,7 @@ export default function BookScreen(){
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
     const [ message, setMessage ] = useState(null);
+    const [ notFound, setNotFound ] = useState(false);
     
     async function fetch() {
         async function getBook() {
@@ -119,10 +121,13 @@ export default function BookScreen(){
                 });
             }).catch(error => {
                 if (error.response){
+                    if (error.response.status === 404){
+                        setNotFound(true);
+                    }
                     setError(error.response.data);
                     setMessage(error.response.data.message);
                 }
-                setOpen(true)
+                setOpen(()=>{return (error.response.status !== 404?true:false)})
             });
     }
 
@@ -162,40 +167,45 @@ export default function BookScreen(){
                 </Snackbar>
             </ClickAwayListener>
 
-            <div className={classes.gridContainer}>
-                
-                <Grid container alignItems='flex-start' spacing={5}>
-                  
-                    <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
-                        <div className={classes.titleMobile}>
-                            <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
-                            <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
-                        </div>
-                        <BookImageGrid main={mainImage} images={images}/>
+            {loaded && !notFound && <>
+                <div className={classes.gridContainer}>
+                    
+                    <Grid container alignItems='flex-start' spacing={5}>
+                    
+                        <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
+                            <div className={classes.titleMobile}>
+                                <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
+                                <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
+                            </div>
+                            <BookImageGrid main={mainImage} images={images}/>
 
-                    </Grid>
-                    <Grid className={classes.imagesContainer} height='100%' item xs={12} md={4}>
-                        <div className={classes.detailsContainer}>
-                            <div className={classes.titleDesktop}>
-                                <Typography variant={'h5'} align={'left'}><b>{book.title}</b></Typography>
-                                <Typography variant={'subtitle1'} align={'left'}><b>Autor: </b>{book.author}</Typography>
+                        </Grid>
+                        <Grid className={classes.imagesContainer} height='100%' item xs={12} md={4}>
+                            <div className={classes.detailsContainer}>
+                                <div className={classes.titleDesktop}>
+                                    <Typography variant={'h5'} align={'left'}><b>{book.title}</b></Typography>
+                                    <Typography variant={'subtitle1'} align={'left'}><b>Autor: </b>{book.author}</Typography>
+                                </div>
+                                <Typography variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>
+                                <Typography variant={'subtitle1'} align={'left'}><b>Orígen: </b>ORIGEN</Typography>
+                                <Typography variant={'subtitle1'} align={'left'}><b>Publicado por: </b> {user.alias}</Typography>
+                                <div>
+                                <Typography variant={'h6'} align={'left'}><strong>Descripción:</strong></Typography>
+                                <Typography variant={'body1'} align={'left'}>{book.description? book.description : <i>No hay descripción</i>}</Typography>
+                                </div>
                             </div>
-                            <Typography variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>
-                            <Typography variant={'subtitle1'} align={'left'}><b>Orígen: </b>ORIGEN</Typography>
-                            <Typography variant={'subtitle1'} align={'left'}><b>Publicado por: </b> {user.alias}</Typography>
-                            <div>
-                            <Typography variant={'h6'} align={'left'}><strong>Descripción:</strong></Typography>
-                            <Typography variant={'body1'} align={'left'}>{book.description? book.description : <i>No hay descripción</i>}</Typography>
-                            </div>
-                        </div>
+                        </Grid>
                     </Grid>
+                    <br/>
+                </div>
+                <Grid container className={classes.bookCarousel} spacing={0}>
+                <Grid item xs={12}><Paper square className={classes.carouselPaper} elevation={3}> otros libros de <b onClick = {onClickUser}>{user.alias}</b></Paper></Grid>
+                <Grid item xs={12}>{loaded && <BookGrid books={books}/>}</Grid>
                 </Grid>
-                <br/>
-            </div>
-            <Grid container className={classes.bookCarousel} spacing={0}>
-            <Grid item xs={12}><Paper square className={classes.carouselPaper} elevation={3}> otros libros de <b onClick = {onClickUser}>{user.alias}</b></Paper></Grid>
-            <Grid item xs={12}>{loaded && <BookGrid books={books}/>}</Grid>
-            </Grid>
+            </>}
+            {notFound &&
+                <NotFound target='el libro'/>
+            }
         </div>
 
     )    

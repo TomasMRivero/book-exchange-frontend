@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
         iconContaier:{
             display: 'flex',
             justifyContent: 'flex-end',
+            marginLeft: theme.spacing(2)
         }
 }));
 
@@ -47,7 +48,7 @@ export default function Nav(){
     const onClickHome = useCallback((e) => {
         e.preventDefault()
         history.push('/');
-    })
+    });
     /*let classes = ['nav-bar'];
     if (match.isExact){
         classes.push("no-searchbar");
