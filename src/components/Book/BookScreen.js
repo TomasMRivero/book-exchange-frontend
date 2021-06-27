@@ -102,10 +102,10 @@ export default function BookScreen(){
                 batch(() => {
                     dispatch(showBook(book.data));
     
-                    dispatch(showUser(users.data.find(u => u.id === book.user_account_id)));
+                    dispatch(showUser(users.data.find(u => u.id === book.data.user_account_id)));
     
                     dispatch(showBookList(books.data));
-                    dispatch(showBookListIDs(books.data.filter(b => b.user_account_id === book.user_account_id && b.id !== bookID).map(b => b.id).reverse()));
+                    dispatch(showBookListIDs(books.data.filter(b => b.user_account_id === book.data.user_account_id && b.id !== bookID).map(b => b.id).reverse()));
     
                     dispatch(showUserList(users.data));
                     dispatch(showUserListIDs(users.data.map(u => u.id).reverse()));
@@ -126,6 +126,7 @@ export default function BookScreen(){
         };
     }, [bookID, dispatch]);
 
+    console.log(user.data);
     const onClickUser = useCallback((e) => {
         history.push(`/user/${user.id}`);
     })
