@@ -23,11 +23,11 @@ export default function BooksScreen() {
 
     async function fetch() {
         async function getBooks(){
-            return await axios.get('http://localhost:4000/book');
+            return await axios.get('book');
         }
 
         async function getUsers(){
-            return await axios.get('http://localhost:4000/user');
+            return await axios.get('user');
         }
 
         Promise.all([getBooks(), getUsers()])

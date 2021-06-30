@@ -89,31 +89,32 @@ export default function BookScreen(){
     
     async function fetch() {
         async function getBook() {
-            return await axios.get(`http://localhost:4000/book/${bookID}`);
+            return await axios.get(`book/${bookID}`);
         }
         async function getBooks() {
-            return await axios.get(`http://localhost:4000/book`);
+            return await axios.get(`book`);
         }
         async function getUsers() {
-            return await axios.get('http://localhost:4000/user');
+            return await axios.get('user');
         }
 
         Promise.all([getBook(), getBooks(), getUsers()])
             .then( results => {
-                const book = results[0];
-                const books = results[1];
-                const users = results[2];
+                const book = results[0].data.books;
+                const books = results[1].data;
+                const users = results[2].data;
 
+                
                 batch(() => {
-                    dispatch(showBook(book.data));
+                    dispatch(showBook(book));
     
-                    dispatch(showUser(users.data.find(u => u.id === book.data.user_account_id)));
+                    dispatch(showUser(users.find(u => u.id === book.user_account_id)));
     
-                    dispatch(showBookList(books.data));
-                    dispatch(showBookListIDs(books.data.filter(b => b.user_account_id === book.data.user_account_id && b.id !== bookID).map(b => b.id).reverse()));
+                    dispatch(showBookList(books));
+                    dispatch(showBookListIDs(books.filter(b => b.user_account_id === book.user_account_id && b.id !== bookID).map(b => b.id).reverse()));
     
-                    dispatch(showUserList(users.data));
-                    dispatch(showUserListIDs(users.data.map(u => u.id).reverse()));
+                    dispatch(showUserList(users));
+                    dispatch(showUserListIDs(users.map(u => u.id).reverse()));
     
                     setError(null);
                     setLoaded(true);
@@ -155,7 +156,6 @@ export default function BookScreen(){
         "https://static4.depositphotos.com/1006472/361/i/950/depositphotos_3614368-stock-photo-blank-book.jpg",
     ]
 
-    
     return (
 
         <div className={classes.root}>

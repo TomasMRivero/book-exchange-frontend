@@ -77,10 +77,10 @@ export default function BookSearchResults({location}){
 
     async function fetch() {
         async function getBooks() {
-            return await axios.get(`http://localhost:4000/book/search/${field}?q=${value.q}`);
+            return await axios.get(`book/search/${field}?q=${value.q}`);
         }
         async function getUsers() {
-            return await axios.get('http://localhost:4000/user');
+            return await axios.get('user');
         }
         Promise.all([getBooks(), getUsers()])
             .then(results => {

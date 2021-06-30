@@ -72,10 +72,10 @@ export default function UserScreen(){
 
     async function fetch() {
         async function getUserById(){
-            return await axios.get(`http://localhost:4000/user/${userID}`);
+            return await axios.get(`user/${userID}`);
         }
         async function getBooks(){
-            return await axios.get('http://localhost:4000/book/');
+            return await axios.get('book/');
         }
         Promise.all([getUserById(), getBooks()])
             .then(results =>{

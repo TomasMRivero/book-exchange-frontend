@@ -35,8 +35,7 @@ export default function BookUploadScreen (){
         e.preventDefault();
 
         async function post() {
-                await axios.post('http://localhost:4000/book', {
-                        user_account_id : userId,
+                await axios.post('book', {
                         title,
                         author,
                         description
@@ -75,14 +74,6 @@ export default function BookUploadScreen (){
             </div>
             <form id="book-form" className="book-form" onSubmit={onBookSubmit}>
 
-                <input
-                    className="input-user datos"
-                    placeholder="Id del dueño"
-                    onChange = {onChangeUserId}
-                    type = "number"
-                    value = {userId}
-                    required
-                /><br/>
                 <input
                     className="input-title datos"
                     placeholder="Título"

@@ -76,7 +76,7 @@ export default function BookImageGrid(props) {
                 <Grid item xs={2} sm={2}  container className={classes.gridListContainer}>
                     <GridList className={classes.gridList} spacing={0} cols={1} cellHeight={'auto'} >
                         {images.map(i=>
-                            <img className={classes.gridListImg} src={i} onClick={() => setShown(i)}  />    
+                            <img key={images.indexOf[i]} className={classes.gridListImg} src={i} onClick={() => setShown(i)}  />    
                         )}
                     </GridList>
                 </Grid>
