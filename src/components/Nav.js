@@ -9,8 +9,8 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
         grow: {
             width: '100%',
-            marginRight: 0,
             padding: 0,
+            margin: 0,
             flexGrow: 1,
         },
         menuButton: {
@@ -55,7 +55,7 @@ export default function Nav(){
     }*/
     return(
         <div className={classes.grow}>
-            <AppBar position="fixed">
+            <AppBar position='fixed'>
                 <Toolbar style={{display: 'flex', justifyContent:'space-between'}}>
                     <IconButton
                         edge="start"

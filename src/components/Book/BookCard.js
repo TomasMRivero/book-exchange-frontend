@@ -70,7 +70,7 @@ export default function BookCard(props){
                     className={classes.image}
                     alt="Libro"
                     image="https://images.freeimages.com/images/premium/previews/1461/1461865-old-worn-book.jpg"
-                    title="Contemplative Reptile"
+                    title={book.title}
                     height = {props.setHeight}
                 />
                 <CardContent className={classes.content} xs zeroMinWidth>

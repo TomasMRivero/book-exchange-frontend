@@ -20,9 +20,6 @@ export default function BookGrid(props){
     const books = props.books;
     const {height, width} = useWindowDimensions();
 
-    console.log({height});
-    console.log({width});
-
     const setCols = (width) => {
         if (width >= 960){
             return 5

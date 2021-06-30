@@ -1,6 +1,6 @@
 import './App.css';
 
-import { BrowserRouter, Switch, Route, useLocation, useHistory } from 'react-router-dom'
+import { Switch, Route, useLocation } from 'react-router-dom'
 
 import BooksScreen from './components/Book/BooksScreen';
 import BookSearchResults from './components/Book/BookSearchResults';

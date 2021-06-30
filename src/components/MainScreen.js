@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
         transition: "1s ease",
         fontSize:'1.2em',
         [theme.breakpoints.down('xs')]: {
-            fontSize:'0.8em'
+            fontSize:'0.9em'
         },
         fontWeight: 'bold',
         background: '#6fa1ff',

@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 3,
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        overflowX:'hidden'
     },
     gridContainer:{
         width: '90%',
