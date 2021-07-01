@@ -4,6 +4,7 @@ import { Alert } from "@material-ui/lab";
 import axios from "axios";
 import { useState } from "react";
 import { useCallback } from "react";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -45,6 +46,10 @@ export default function RegisterForm(){
     
     const classes = useStyles();
 
+    const [error, setError] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState(null);
+
     const [name, setName] = useState('');
     const onChangeName = useCallback((e) => {
         setName(e.target.value)
@@ -75,15 +80,52 @@ export default function RegisterForm(){
         setConfirmPassword(e.target.value);
     });
 
-    const onRegister = useCallback((e) => {
-        e.preventDefault()
-    },[]);
+    const onRegister = useCallback(async(e) => {
+        e.preventDefault();
+        try{
+            if(password !== confirmPassword){
+                throw {message: "Las contraseñas no coinciden"};
+            }
+            async function register() {
+                await axios.post('register',{
+                    mail: mail,
+                    gender_id: gender,
+                    alias: alias,
+                    name: name,
+                    password: password
+                }).then(response =>{
+                    setError(null);
+                    console.log(response);
+                    return (<Redirect to="/" />);
+                }).catch(error => {
+                    if (error.response){
+                        setError(error.response);
+                        setMessage(error.response.data);
+                    }
+                    setOpen(true)
+                })
+            }
+            register()
+        }catch(error){
+            setMessage(error.message);
+            setOpen(true);
+        }
+
+    },[name, gender, alias, mail, password, confirmPassword]);
 
     
+    const handleClose = () => {
+        setOpen(false);
+    };
+    
     return(
-        <>
         <form className={classes.root} id="register-form" onSubmit={onRegister}>
 
+            <ClickAwayListener onClickAway={handleClose}>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
+                </Snackbar>
+            </ClickAwayListener>
 
             <Grid container className={classes.container} spacing={5}>
 
@@ -129,6 +171,5 @@ export default function RegisterForm(){
             </Grid>
 
         </form >
-    </>
     )
 }
