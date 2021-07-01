@@ -4,7 +4,9 @@ import { Alert } from "@material-ui/lab";
 import axios from "axios";
 import { useState } from "react";
 import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { Redirect } from "react-router";
+import { setAuthenticated, setAuthUser } from "../redux/actions";
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -45,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 export default function RegisterForm(){
     
     const classes = useStyles();
+    const dispatch = useDispatch()
 
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
@@ -79,6 +82,59 @@ export default function RegisterForm(){
     const onChangeConfirmPassword = useCallback((e) => {
         setConfirmPassword(e.target.value);
     });
+    
+    
+    
+    async function getAuthUser(){
+        await axios.get('/user/me').then(
+          response => {
+            const user = response.data;
+            dispatch(setAuthUser(user));
+          }).catch(error => {
+            console.error(error);
+            console.error(error.response);
+          })    
+    }
+
+    async function login() {
+        await axios.post('login',{
+            alias: alias,
+            password: password
+        }).then(response =>{
+            setError(null);
+            console.log(response);
+            localStorage.setItem('token', response.data.token);
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            getAuthUser()
+            dispatch(setAuthenticated());
+        }).catch(error => {
+            if (error.response){
+                setError(error.response);
+                setMessage(error.response.data);
+            }
+            setOpen(true)
+        })
+    }
+
+    async function register() {
+        await axios.post('register',{
+            mail: mail,
+            gender_id: gender,
+            alias: alias,
+            name: name,
+            password: password
+        }).then(response =>{
+            setError(null);
+            console.log(response);
+            login();
+        }).catch(error => {
+            if (error.response){
+                setError(error.response);
+                setMessage(error.response.data);
+            }
+            setOpen(true)
+        })
+    }
 
     const onRegister = useCallback(async(e) => {
         e.preventDefault();
@@ -86,31 +142,11 @@ export default function RegisterForm(){
             if(password !== confirmPassword){
                 throw {message: "Las contraseñas no coinciden"};
             }
-            async function register() {
-                await axios.post('register',{
-                    mail: mail,
-                    gender_id: gender,
-                    alias: alias,
-                    name: name,
-                    password: password
-                }).then(response =>{
-                    setError(null);
-                    console.log(response);
-                    return (<Redirect to="/" />);
-                }).catch(error => {
-                    if (error.response){
-                        setError(error.response);
-                        setMessage(error.response.data);
-                    }
-                    setOpen(true)
-                })
-            }
-            register()
+            register();
         }catch(error){
             setMessage(error.message);
             setOpen(true);
         }
-
     },[name, gender, alias, mail, password, confirmPassword]);
 
     
@@ -128,7 +164,10 @@ export default function RegisterForm(){
             </ClickAwayListener>
 
             <Grid container className={classes.container} spacing={5}>
-
+                
+                <Grid item xs={12}>
+                    <TextField className={classes.input} label="Alias" variant="outlined" value={alias} onChange={onChangeAlias} required={true} />
+                </Grid>
                 <Grid item xs={12}>
                     <TextField className={classes.input} label="Nombre" variant="outlined" value={name} onChange={onChangeName} required={true} />
                 </Grid>
@@ -150,9 +189,6 @@ export default function RegisterForm(){
                         <MenuItem value={5} >Prefiero no aclarar</MenuItem>
                     </Select>
                     </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField className={classes.input} label="Alias" variant="outlined" value={alias} onChange={onChangeAlias} required={true} />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField className={classes.input} label="Mail" variant="outlined" value={mail} onChange={onChangeMail} type="email" required={true} />
