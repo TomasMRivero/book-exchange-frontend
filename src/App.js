@@ -2,6 +2,8 @@ import './App.css';
 
 import { Switch, Route, useLocation } from 'react-router-dom'
 
+import { Redirect } from 'react-router';
+
 import BooksScreen from './components/Book/BooksScreen';
 import BookSearchResults from './components/Book/BookSearchResults';
 import BookUploadScreen from './components/Book/BookUploadScreen';
@@ -19,14 +21,11 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { setAuthenticated, setAuthUser } from './redux/actions';
 
-
-
 const useStyles = makeStyles((theme) => ({
   root:{
     background: "#fff",
     minHeight:'100vh',
     padding: 0,
-    paddingBottom: 45,
   }
 }));
 
@@ -70,11 +69,15 @@ export default function App() {
         <ScrollToTop />
         {location.pathname !== "/"  && <Container maxWidth="md" className={classes.root} >
           <Switch >
-            <Route path="/login" component={LoginForm} />
+            <Route path="/login" >
+              {!isAuthenticated ? <LoginForm /> : <Redirect to="/" />}
+            </Route>
             <Route path="/book/search/:field" component={BookSearchResults} />
             <Route path="/book/showall" component={BooksScreen} />
             <Route path="/book/:id" component={BookScreen} />
-            <Route path="/book" component={BookUploadScreen} />
+            <Route exact path="/book" >
+              {isAuthenticated ? <BookUploadScreen /> : <Redirect to="/login" />}
+            </Route>
             <Route path="/user/:id" component={UserScreen} />
             <Route component = {NotFound} />
         </Switch>

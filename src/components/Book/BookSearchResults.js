@@ -12,9 +12,9 @@ import { Alert } from "@material-ui/lab";
 const useStyles = makeStyles((theme) => ({
     root:{
         margin: 'auto',
-        marginTop: 56,
+        paddingTop: 56,
         [theme.breakpoints.up('sm')]: {
-            marginTop: 64,
+            paddingTop: 64,
         },
     },
     header:{
