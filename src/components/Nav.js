@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
         },
         typo:{
             transition: ".3s ease",
-            color: 'black',
+            color: 'rgba(0, 0, 0, 0.74)',
             cursor: 'pointer',
             '&:hover':{
-                color: 'white'
+                color: 'rgba(255, 255, 255, 0.9)'
             }
         },
         iconContaier:{
@@ -65,7 +65,7 @@ function ShowLogin(props) {
     }
     return (
         <div>
-            <Typography onClick={props.onClick.onClickLogin} className={classes.typo}>Login</Typography>
+            <Typography onClick={props.onClick.onClickLogin} className={classes.typo}><b>Login</b></Typography>
         </div>
     )
 }

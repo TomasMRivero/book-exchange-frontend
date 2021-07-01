@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useCallback, useState } from "react"
-import { Button, ClickAwayListener, Grid, Snackbar, TextField } from "@material-ui/core";
+import { Button, ClickAwayListener, Grid, Link, Snackbar, TextField, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthenticated, setAuthUser } from "../redux/actions";
-import { Redirect } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
@@ -31,21 +31,25 @@ const useStyles = makeStyles((theme) => ({
         width: '100%'
     },
     button:{
-        
         width: 'auto',
         transition: "1s ease",
         fontWeight: 'bold',
-        color: '#13131e',
+        color: 'rgba(0, 0, 0, 0.74)',
         background: '#6fa1ff',
         '&:hover':{
             background: '#a5c5ff',
         },
-
+    },
+    newAcc:{
+        transition: "1s ease",
+        fontWeight: "bold",
+        cursor: 'pointer'
     }
 }));
 
 export default function LoginForm(props){
     const classes = useStyles();
+    const history = useHistory();
     const dispatch = useDispatch();
 
     const [error, setError] = useState(null);
@@ -103,6 +107,11 @@ export default function LoginForm(props){
         setOpen(false);
     };
 
+    const onClickRegister = useCallback((e) => {
+        e.preventDefault();
+        history.push('/register');
+    })
+    
 
     return(
         <form className={classes.root} id="login-form" onSubmit={onLogin}>
@@ -122,6 +131,9 @@ export default function LoginForm(props){
                 </Grid>
                 <Grid item xs={12}>
                     <Button className={classes.button} type="submit" variant="contained">Iniciar Sesión</Button>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography className={classes.newAcc} variant="p"><Link onClick={onClickRegister}>Crear una nueva cuenta</Link></Typography>
                 </Grid>
             </Grid>
            

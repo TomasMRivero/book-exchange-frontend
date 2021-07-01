@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
         width: 'auto',
         transition: "1s ease",
         fontWeight: 'bold',
-        color: '#13131e',
+        color: 'rgba(0, 0, 0, 0.74)',
         background: '#6fa1ff',
         '&:hover':{
             background: '#a5c5ff',
