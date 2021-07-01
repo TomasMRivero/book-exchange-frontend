@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { setAuthenticated, setAuthUser } from './redux/actions';
+import RegisterForm from './components/RegisterForm';
 
 const useStyles = makeStyles((theme) => ({
   root:{
@@ -71,6 +72,9 @@ export default function App() {
           <Switch >
             <Route path="/login" >
               {!isAuthenticated ? <LoginForm /> : <Redirect to="/" />}
+            </Route>
+            <Route path="/register" >
+              {!isAuthenticated ? <RegisterForm /> : <Redirect to="/" />}
             </Route>
             <Route path="/book/search/:field" component={BookSearchResults} />
             <Route path="/book/showall" component={BooksScreen} />
