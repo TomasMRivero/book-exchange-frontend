@@ -17,7 +17,10 @@ import LoginForm from './components/LoginForm';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { setAuthenticated } from './redux/actions';
+import { setAuthenticated, setAuthUser } from './redux/actions';
+
+
+
 const useStyles = makeStyles((theme) => ({
   root:{
     background: "#fff",
@@ -28,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function App() {
+
   const dispatch = useDispatch()
 
   const classes=useStyles();
@@ -35,10 +39,25 @@ export default function App() {
 
   const isAuthenticated = useSelector(state => state.models.authenticated);
   const authorization = axios.defaults.headers.common.authorization;
+
+  const loggedIn = false
   
+  async function getAuthUser(){
+    await axios.get('/user/me').then(
+      response => {
+        const user = response.data;
+        dispatch(setAuthUser(user));
+      }).catch(error => {
+        console.error(error);
+        console.error(error.response);
+      })    
+  }
+
   useEffect(() => {
     if(authorization !== null){
       dispatch(setAuthenticated());
+      getAuthUser();
+      console.log('fx');
     }
   }, [dispatch]);
 

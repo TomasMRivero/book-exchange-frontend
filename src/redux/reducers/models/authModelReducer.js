@@ -1,8 +1,8 @@
-import { SET_AUTHENTICATED } from "../../actions"
+import { SET_AUTHENTICATED, SET_AUTH_USER } from "../../actions"
 
 const INITIAL_STATE = false;
 
-export default function authenticated( state = INITIAL_STATE, action) {
+export function authenticated( state = INITIAL_STATE, action) {
     switch(action.type) {
       case SET_AUTHENTICATED:
         return !state
@@ -10,3 +10,12 @@ export default function authenticated( state = INITIAL_STATE, action) {
         return state;
     }
   }
+
+export function authUser( state = {}, action) {
+  switch(action.type) {
+    case SET_AUTH_USER:
+      return {...action.payload};
+    default:
+      return state;
+  }
+}
