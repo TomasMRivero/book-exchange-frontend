@@ -145,6 +145,8 @@ export default function BookScreen(){
 
     const isAuthenticated = useSelector(state => state.models.authenticated);
     const authUser = useSelector(state => state.models.authUser);
+    console.log(authUser)
+
 
     const book = useSelector(state => state.models.book);
     const user = useSelector(state => state.models.user);
@@ -310,7 +312,7 @@ export default function BookScreen(){
             });
         }
         del();
-    }, [dispatch, book]);
+    }, [dispatch, book, authUser]);
 
     return (
 
