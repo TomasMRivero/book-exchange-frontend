@@ -3,7 +3,8 @@ export const SHOW_BOOK_LIST_IDS = 'SHOW_BOOK_LIST_IDS';
 export const SHOW_BOOK = 'SHOW_BOOK';
 export const SHOW_BOOK_ID = 'SHOW_BOOK_ID';
 
-export const EDIT_BOOK = 'EDIT_BOOK'
+export const EDIT_BOOK = 'EDIT_BOOK';
+export const DELETE_BOOK = 'DELETE_BOOK';
 
 
 export const showBookList = books => {
@@ -36,4 +37,11 @@ export const editBook = book => {
         type: EDIT_BOOK,
         payload: book
     }
-}
+};
+
+export const deleteBook = book => {
+    return {
+        type: DELETE_BOOK,
+        payload: book
+    }
+};

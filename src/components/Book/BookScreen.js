@@ -2,10 +2,10 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs, editBook } from "../../redux/actions";
+import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs, editBook, deleteBook } from "../../redux/actions";
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Paper, ClickAwayListener, Snackbar, IconButton, TextField } from "@material-ui/core";
-import { Edit, Delete, Cancel, Save } from "@material-ui/icons";
+import { Grid, Typography, Paper, ClickAwayListener, Snackbar, IconButton, TextField, DialogActions, DialogContent, DialogContentText, Button, Dialog, DialogTitle } from "@material-ui/core";
+import { Edit, Delete, Cancel, Save, FormatColorResetOutlined } from "@material-ui/icons";
 import BookGrid from "./BookGrid";
 import BookImageGrid from "./BookImageGrid";
 import { Alert } from "@material-ui/lab";
@@ -96,7 +96,7 @@ function EditSection(props){
                             <Cancel />
                         </IconButton>
                     </>}
-                    <IconButton size='small'>
+                    <IconButton size='small' onClick = {onClick.delete}>
                         <Delete />
                     </IconButton>
                 </Grid>
@@ -106,8 +106,20 @@ function EditSection(props){
                     <Typography  variant={'subtitle1'} align={'left'}>{book.author}</Typography>
                     </>}
                     {props.editing &&<>                    
-                    <TextField multiline style={{width:'100%', marginTop:10}} label="Título"  value={title} onChange={props.onChange.title} />
-                    <TextField multiline style={{width:'100%', marginTop:10}} label="Autor"  value={author} onChange={props.onChange.author} />
+                        <TextField
+                            multiline
+                            style={{width:'100%', marginTop:10}}
+                            label="Título"
+                            value={title}
+                            onChange={props.onChange.title}
+                        />
+                        <TextField
+                            multiline
+                            style={{width:'100%', marginTop:10}}
+                            label="Autor" 
+                            value={author}
+                            onChange={props.onChange.author}
+                        />
                     </>}
                 </Grid>
     
@@ -143,6 +155,7 @@ export default function BookScreen(){
     const[loaded, setLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [open, setOpen] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false)
     const [ message, setMessage ] = useState(null);
     const [ notFound, setNotFound ] = useState(false);
     
@@ -207,6 +220,10 @@ export default function BookScreen(){
     const handleClose = () => {
         setOpen(false);
     };
+
+    const closeDialog = () => {
+        setOpenDialog(false);
+    }
 
     const onClickUser = useCallback((e) => {
         history.push(`/user/${user.id}`);
@@ -278,12 +295,29 @@ export default function BookScreen(){
         put();
     }, [title, author, description, authUser, bookID])
 
+    const onDelete = useCallback((e) => {
+        e.preventDefault();
+        async function del(){
+            axios.delete(`book/${bookID}`).then(response => {
+                dispatch(deleteBook(book));
+                history.push(`../user/${authUser.id}`)
+            }).catch(error => {
+                if (error.response){
+                    setError(error.response.data);
+                    setMessage(error.response.data.message);
+                }
+                setOpen(true)
+            });
+        }
+        del();
+    }, [dispatch, book]);
+
     return (
 
         <div className={classes.root}>
             
             <ClickAwayListener onClickAway={handleClose}>
-                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Snackbar anchorOrigin={{ vertical:'top', horizontal:'center' }} open={open} autoHideDuration={6000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
                 </Snackbar>
             </ClickAwayListener>
@@ -291,11 +325,38 @@ export default function BookScreen(){
             {loaded && !notFound && <>
                 <div className={classes.gridContainer}>
                     
+                    <Dialog
+                        open={openDialog}
+                        onClose={closeDialog}
+                    >
+                        <DialogTitle>Desea eliminar este libro?</DialogTitle>
+
+                        <DialogContent>
+                            <DialogContentText>
+                                Se eliminará de forma definitiva.
+                            </DialogContentText>
+                        </DialogContent>
+
+                        <DialogActions>
+                            <Button onClick={closeDialog}>Cancelar</Button>
+                            <Button onClick={closeDialog} autoFocus onClick={onDelete}>
+                                Confirmar
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
                     <Grid container alignItems='flex-start' spacing={5} >
                     
                         <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
                             <div className={classes.titleMobile}>
-                                <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit, save: onSave}} />
+                                <EditSection
+                                    onChange={{title: onChangeTitle, author: onChangeAuthor}}
+                                    values={{title: title, author: author}}
+                                    classes={{typo: classes.typo}} book={book}
+                                    isOwner={isOwner()}
+                                    editing={editing}
+                                    onClick={{edit: onClickEdit, save: onSave, delete: setOpenDialog}}
+                                />
                             </div>
                             <BookImageGrid main={mainImage} images={images}/>
 
@@ -303,7 +364,15 @@ export default function BookScreen(){
                         <Grid className={classes.imagesContainer} height='100%'item xs={12} md={4} >
                             <div className={classes.detailsContainer}>
                                 <div className={classes.titleDesktop}>
-                                    <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit, save: onSave}}/>
+                                    <EditSection
+                                        onChange={{title: onChangeTitle, author: onChangeAuthor}}
+                                        values={{title: title, author: author}}
+                                        classes={{typo: classes.typo}}
+                                        book={book}
+                                        isOwner={isOwner()}
+                                        editing={editing}
+                                        onClick={{edit: onClickEdit, save: onSave, delete: setOpenDialog}}
+                                    />
                                 </div >
                                 <Grid container>
                                     <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>

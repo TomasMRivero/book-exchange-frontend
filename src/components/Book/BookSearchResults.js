@@ -131,7 +131,7 @@ export default function BookSearchResults({location}){
         <div className={classes.root}>
             
             <ClickAwayListener onClickAway={handleClose}>
-                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Snackbar anchorOrigin={{ vertical:'top', horizontal:'center' }} open={open} autoHideDuration={6000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity="error" elevation={6}>{message}</Alert>
                 </Snackbar>
             </ClickAwayListener>

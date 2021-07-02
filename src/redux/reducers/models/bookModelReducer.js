@@ -1,4 +1,4 @@
-import {EDIT_BOOK, SHOW_BOOK, SHOW_BOOK_LIST} from '../../actions'
+import {DELETE_BOOK, EDIT_BOOK, SHOW_BOOK, SHOW_BOOK_LIST} from '../../actions'
 
 export function books(state = {}, action) {
     switch (action.type) {
@@ -21,6 +21,10 @@ export function books(state = {}, action) {
                     ...action.payload
                 }
             };
+            case DELETE_BOOK:
+                const copy = {...state};
+                delete copy[action.payload.id];
+                return copy;
         default:
             return state;
     }
@@ -34,6 +38,10 @@ export function book(state = {}, action) {
         case EDIT_BOOK:
             return{
                 ...action.payload
+            };
+        case DELETE_BOOK:
+            return{
+                state
             };
         default:
             return state;
