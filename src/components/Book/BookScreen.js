@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
+import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs, editBook } from "../../redux/actions";
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography, Paper, ClickAwayListener, Snackbar, IconButton, TextField } from "@material-ui/core";
 import { Edit, Delete, Cancel, Save } from "@material-ui/icons";
@@ -89,7 +89,7 @@ function EditSection(props){
                         <Edit onClick = {onClick.edit}/>
                     </IconButton>}
                     {props.editing && <>
-                        <IconButton size='small'>
+                        <IconButton size='small' onClick = {onClick.save}>
                             <Save />
                         </IconButton>
                         <IconButton size='small' onClick = {onClick.edit}>
@@ -243,10 +243,40 @@ export default function BookScreen(){
     });
 
     useEffect(() => {
+        setEditing(false);
         setTitle(book.title);
         setAuthor(book.author);
         setDescription(book.description);
     }, [book]);
+
+    const onSave = useCallback((e) => {
+        e.preventDefault();
+        async function put(){
+            await axios.put(`book/${bookID}`, {
+                title,
+                author,
+                description
+        
+            }).then(response => {
+                setError(null);
+                dispatch(editBook({
+                    id: bookID,
+                    user_account_id: authUser.id,
+                    title: response.data.resp.title,
+                    author: response.data.resp.author,
+                    description: response.data.resp.description
+                }));
+                setEditing(false);
+            }).catch(error => {
+                if (error.response){
+                    setError(error.response.data);
+                    setMessage(error.response.data.message);
+                }
+                setOpen(true)
+            });
+        }
+        put();
+    }, [title, author, description, authUser, bookID])
 
     return (
 
@@ -265,7 +295,7 @@ export default function BookScreen(){
                     
                         <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
                             <div className={classes.titleMobile}>
-                                <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit}} />
+                                <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit, save: onSave}} />
                             </div>
                             <BookImageGrid main={mainImage} images={images}/>
 
@@ -273,7 +303,7 @@ export default function BookScreen(){
                         <Grid className={classes.imagesContainer} height='100%'item xs={12} md={4} >
                             <div className={classes.detailsContainer}>
                                 <div className={classes.titleDesktop}>
-                                    <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit}}/>
+                                    <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit, save: onSave}}/>
                                 </div >
                                 <Grid container>
                                     <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>

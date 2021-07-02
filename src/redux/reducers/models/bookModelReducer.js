@@ -13,14 +13,14 @@ export function books(state = {}, action) {
                 ...state,
                 ...extend
             };
-        case EDIT_BOOK:
+            case EDIT_BOOK:
             return{
                 ...state,
                 [action.payload.id]: {
                     ...state[action.payload.id],
                     ...action.payload
                 }
-            }
+            };
         default:
             return state;
     }
@@ -28,6 +28,10 @@ export function books(state = {}, action) {
 export function book(state = {}, action) {
     switch (action.type) {
         case SHOW_BOOK:
+            return{
+                ...action.payload
+            };
+        case EDIT_BOOK:
             return{
                 ...action.payload
             };
