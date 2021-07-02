@@ -4,8 +4,8 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Paper, ClickAwayListener, Snackbar } from "@material-ui/core";
-
+import { Grid, Typography, Paper, ClickAwayListener, Snackbar, IconButton } from "@material-ui/core";
+import { Edit, Delete } from "@material-ui/icons";
 import BookGrid from "./BookGrid";
 import BookImageGrid from "./BookImageGrid";
 import { Alert } from "@material-ui/lab";
@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 15,
         border: '1px solid lightgray',
     },
+    typo:{
+        wordBreak: 'break-all',
+    },
     titleDesktop:{
         display: 'block',
         [theme.breakpoints.down('sm')]: {
@@ -68,12 +71,48 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
+function EditSection(props){
+    const book = props.book;
+    console.log(props.isOwner)
+    if (props.isOwner){
+        return(
+            <Grid container>
+                
+                <Grid item xs={10}>
+                    <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
+                    <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
+                </Grid>
+                <Grid item xs={2} style={{display:'flex', height: 'auto', justifyContent: 'center', alignItems: 'flex-start'}}>
+                    <IconButton size='small'>
+                        <Edit />
+                    </IconButton>
+                    <IconButton size='small'>
+                        <Delete />
+                    </IconButton>
+                </Grid>
+    
+            </Grid>
+        )
+    }
+    return(
+        <Grid container>
+            <Grid item xs={12}>
+                <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
+                <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
+            </Grid>
+        </Grid>
+    )
+}
+
 export default function BookScreen(){
     const classes = useStyles();
 
     const dispatch = useDispatch();
     const bookID = Number(useParams().id);
     const history = useHistory();
+
+    const isAuthenticated = useSelector(state => state.models.authenticated);
+    const authUser = useSelector(state => state.models.authUser);
 
     const book = useSelector(state => state.models.book);
     const user = useSelector(state => state.models.user);
@@ -131,6 +170,13 @@ export default function BookScreen(){
             });
     }
 
+    const isOwner = () => {
+        if(isAuthenticated && authUser.id === user.id){
+            return(true)
+        }
+        return(false)
+    }
+
     useEffect(() => {
         fetch()
         return function cleanup() {
@@ -169,29 +215,29 @@ export default function BookScreen(){
             {loaded && !notFound && <>
                 <div className={classes.gridContainer}>
                     
-                    <Grid container alignItems='flex-start' spacing={5}>
+                    <Grid container alignItems='flex-start' spacing={5} >
                     
                         <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
                             <div className={classes.titleMobile}>
-                                <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
-                                <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
+                                <EditSection book={book} isOwner={isOwner()}/>
                             </div>
                             <BookImageGrid main={mainImage} images={images}/>
 
                         </Grid>
-                        <Grid className={classes.imagesContainer} height='100%' item xs={12} md={4}>
+                        <Grid className={classes.imagesContainer} height='100%'item xs={12} md={4} >
                             <div className={classes.detailsContainer}>
                                 <div className={classes.titleDesktop}>
-                                    <Typography variant={'h5'} align={'left'}><b>{book.title}</b></Typography>
-                                    <Typography variant={'subtitle1'} align={'left'}><b>Autor: </b>{book.author}</Typography>
+                                    <EditSection book={book} isOwner={isOwner()}/>
                                 </div>
-                                <Typography variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>
-                                <Typography variant={'subtitle1'} align={'left'}><b>Orígen: </b>ORIGEN</Typography>
-                                <Typography variant={'subtitle1'} align={'left'}><b>Publicado por: </b> {user.alias}</Typography>
-                                <div>
-                                <Typography variant={'h6'} align={'left'}><strong>Descripción:</strong></Typography>
-                                <Typography variant={'body1'} align={'left'}>{book.description? book.description : <i>No hay descripción</i>}</Typography>
-                                </div>
+                                <Grid container>
+                                    <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>
+                                    <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Orígen: </b>ORIGEN</Typography>
+                                    <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Publicado por: </b> {user.alias}</Typography>
+                                    <div>
+                                    <Typography className={classes.typo} variant={'h6'} align={'left'}><strong>Descripción:</strong></Typography>
+                                    <Typography className={classes.typo} variant={'body1'} align={'left'}>{book.description? book.description : <i>No hay descripción</i>}</Typography>
+                                    </div>
+                                </Grid>
                             </div>
                         </Grid>
                     </Grid>
