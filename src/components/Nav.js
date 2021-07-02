@@ -1,5 +1,5 @@
 'use strict'
-import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Typography, Box } from '@material-ui/core';
 import { Home, AccountCircle  } from '@material-ui/icons';
 import { useHistory, useRouteMatch } from "react-router";
 import SearchField from "./SearchField";
@@ -7,6 +7,7 @@ import { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import LogoutButton from './LogoutButton';
 
 const useStyles = makeStyles((theme) => ({
         grow: {
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
         iconContaier:{
             display: 'flex',
             justifyContent: 'flex-end',
-            marginLeft: theme.spacing(2)
+            marginLeft: theme.spacing(2),
         }
 }));
 
@@ -51,16 +52,18 @@ function ShowSearchBar(props) {
     }
     return null
 }
-
 function ShowLogin(props) {
     const classes = props.classes;
     if (props.isAuthenticated){        
         return(
+            <Box style={{display:'flex', alignItems:'center', justifyContent: 'center'}}>
             <div className={classes.iconContaier}>
-                <IconButton edge="end" className = {classes.userIcon} onClick={props.onClick.onClickAccount}>
+                <IconButton size="large" edge="end" className = {classes.userIcon} onClick={props.onClick.onClickAccount}>
                     <AccountCircle />
-                </IconButton>   
+                </IconButton> 
             </div>
+                <LogoutButton className = {classes.typo}/>
+            </Box>
         )
     }
     return (

@@ -69,11 +69,9 @@ export default function MainScreen(){
     const history = useHistory();
     
     const isAuthenticated = useSelector(state => state.models.authenticated);
-    console.log(isAuthenticated)
 
     function ShowButton(props) {
         const classes = props.classes;
-        console.log(props.isAuthenticated)
         if (props.isAuthenticated === true){        
             return(
                 <>
