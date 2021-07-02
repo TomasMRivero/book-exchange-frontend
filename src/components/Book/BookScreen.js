@@ -4,8 +4,8 @@ import { batch, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
 import { showBook, showUser, showBookList, showBookListIDs, showUserList, showUserListIDs } from "../../redux/actions";
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Paper, ClickAwayListener, Snackbar, IconButton } from "@material-ui/core";
-import { Edit, Delete } from "@material-ui/icons";
+import { Grid, Typography, Paper, ClickAwayListener, Snackbar, IconButton, TextField } from "@material-ui/core";
+import { Edit, Delete, Cancel, Save } from "@material-ui/icons";
 import BookGrid from "./BookGrid";
 import BookImageGrid from "./BookImageGrid";
 import { Alert } from "@material-ui/lab";
@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     },
     typo:{
         wordBreak: 'break-all',
+        width: '100%'
     },
     titleDesktop:{
         display: 'block',
@@ -73,22 +74,41 @@ const useStyles = makeStyles((theme) => ({
 
 function EditSection(props){
     const book = props.book;
+    const onClick = props.onClick;
+    const title = props.values.title;
+    const author = props.values.author;
+    
     console.log(props.isOwner)
     if (props.isOwner){
         return(
             <Grid container>
                 
-                <Grid item xs={10}>
-                    <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
-                    <Typography variant={'subtitle1'} align={'left'}>{book.author}</Typography>
-                </Grid>
-                <Grid item xs={2} style={{display:'flex', height: 'auto', justifyContent: 'center', alignItems: 'flex-start'}}>
+                <Grid item xs={12} style={{display:'flex', height: 'auto', justifyContent: 'flex-end', alignItems: 'flex-start'}}>
+                    {!props.editing && 
                     <IconButton size='small'>
-                        <Edit />
-                    </IconButton>
+                        <Edit onClick = {onClick.edit}/>
+                    </IconButton>}
+                    {props.editing && <>
+                        <IconButton size='small'>
+                            <Save />
+                        </IconButton>
+                        <IconButton size='small' onClick = {onClick.edit}>
+                            <Cancel />
+                        </IconButton>
+                    </>}
                     <IconButton size='small'>
                         <Delete />
                     </IconButton>
+                </Grid>
+                <Grid item xs={12}>
+                    {!props.editing && <>
+                    <Typography variant={'h6'} align={'left'}><b>{book.title}</b></Typography>
+                    <Typography  variant={'subtitle1'} align={'left'}>{book.author}</Typography>
+                    </>}
+                    {props.editing &&<>                    
+                    <TextField multiline style={{width:'100%', marginTop:10}} label="Título"  value={title} onChange={props.onChange.title} />
+                    <TextField multiline style={{width:'100%', marginTop:10}} label="Autor"  value={author} onChange={props.onChange.author} />
+                    </>}
                 </Grid>
     
             </Grid>
@@ -126,6 +146,8 @@ export default function BookScreen(){
     const [ message, setMessage ] = useState(null);
     const [ notFound, setNotFound ] = useState(false);
     
+    const [editing, setEditing] = useState(false);
+
     async function fetch() {
         async function getBook() {
             return await axios.get(`book/${bookID}`);
@@ -178,10 +200,7 @@ export default function BookScreen(){
     }
 
     useEffect(() => {
-        fetch()
-        return function cleanup() {
-            console.log("limpiando");
-        };
+        fetch();
     }, [bookID, dispatch]);
 
     
@@ -192,6 +211,12 @@ export default function BookScreen(){
     const onClickUser = useCallback((e) => {
         history.push(`/user/${user.id}`);
     })
+
+    const onClickEdit = useCallback((e) => {
+        e.preventDefault();
+        setEditing(!editing)
+    });
+
     const mainImage = "https://images.freeimages.com/images/premium/previews/1461/1461865-old-worn-book.jpg"
     const images = [
         "https://images.freeimages.com/images/premium/previews/1461/1461865-old-worn-book.jpg",
@@ -200,7 +225,28 @@ export default function BookScreen(){
         "https://media.istockphoto.com/photos/old-book-picture-id139889744",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsqp64xwGXFNJnAoAymzSciNWnf8u9Sptvrw&usqp=CAU",
         "https://static4.depositphotos.com/1006472/361/i/950/depositphotos_3614368-stock-photo-blank-book.jpg",
-    ]
+    ];
+
+    const [title, setTitle] = useState(book.title);
+    const onChangeTitle = useCallback ((e) => {
+        setTitle(e.target.value)
+    });
+
+    const [author, setAuthor] = useState(book.author);
+    const onChangeAuthor = useCallback ((e) => {
+        setAuthor(e.target.value)
+    });
+
+    const [description , setDescription] = useState(book.description);
+    const onChangeDescription = useCallback((e) => {
+        setDescription(e.target.value)
+    });
+
+    useEffect(() => {
+        setTitle(book.title);
+        setAuthor(book.author);
+        setDescription(book.description);
+    }, [book]);
 
     return (
 
@@ -219,7 +265,7 @@ export default function BookScreen(){
                     
                         <Grid className={classes.imagesContainer} height='100%' item xs={12} md={8}>
                             <div className={classes.titleMobile}>
-                                <EditSection book={book} isOwner={isOwner()}/>
+                                <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit}} />
                             </div>
                             <BookImageGrid main={mainImage} images={images}/>
 
@@ -227,15 +273,18 @@ export default function BookScreen(){
                         <Grid className={classes.imagesContainer} height='100%'item xs={12} md={4} >
                             <div className={classes.detailsContainer}>
                                 <div className={classes.titleDesktop}>
-                                    <EditSection book={book} isOwner={isOwner()}/>
-                                </div>
+                                    <EditSection onChange={{title: onChangeTitle, author: onChangeAuthor}} values={{title: title, author: author}} classes={{typo: classes.typo}} book={book} isOwner={isOwner()} editing={editing} onClick={{edit: onClickEdit}}/>
+                                </div >
                                 <Grid container>
                                     <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Genero: </b>GENERO</Typography>
                                     <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Orígen: </b>ORIGEN</Typography>
                                     <Typography className={classes.typo} variant={'subtitle1'} align={'left'}><b>Publicado por: </b> {user.alias}</Typography>
-                                    <div>
+                                    <div style={{width:'100%'}}>
                                     <Typography className={classes.typo} variant={'h6'} align={'left'}><strong>Descripción:</strong></Typography>
+                                    {!editing && <>
                                     <Typography className={classes.typo} variant={'body1'} align={'left'}>{book.description? book.description : <i>No hay descripción</i>}</Typography>
+                                    </>}
+                                    {editing && <TextField style={{width:'100%'}} multiline type="description" variant="outlined" value={description} onChange={onChangeDescription} />}
                                     </div>
                                 </Grid>
                             </div>

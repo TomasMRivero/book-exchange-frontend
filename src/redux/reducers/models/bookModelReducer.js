@@ -1,4 +1,4 @@
-import {SHOW_BOOK, SHOW_BOOK_LIST} from '../../actions'
+import {EDIT_BOOK, SHOW_BOOK, SHOW_BOOK_LIST} from '../../actions'
 
 export function books(state = {}, action) {
     switch (action.type) {
@@ -13,6 +13,14 @@ export function books(state = {}, action) {
                 ...state,
                 ...extend
             };
+        case EDIT_BOOK:
+            return{
+                ...state,
+                [action.payload.id]: {
+                    ...state[action.payload.id],
+                    ...action.payload
+                }
+            }
         default:
             return state;
     }

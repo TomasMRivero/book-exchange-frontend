@@ -3,6 +3,8 @@ export const SHOW_BOOK_LIST_IDS = 'SHOW_BOOK_LIST_IDS';
 export const SHOW_BOOK = 'SHOW_BOOK';
 export const SHOW_BOOK_ID = 'SHOW_BOOK_ID';
 
+export const EDIT_BOOK = 'EDIT_BOOK'
+
 
 export const showBookList = books => {
     return{
@@ -28,3 +30,10 @@ export const showBookID = bookID => {
         payload: bookID
     };
 };
+
+export const editBook = book => {
+    return {
+        type: EDIT_BOOK,
+        payload: book
+    }
+}
