@@ -2,9 +2,9 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
-import { showBookList, showBookListIDs, showUser, showUserList, showUserListIDs } from "../../redux/actions";
+import { editUser, showBookList, showBookListIDs, showUser, showUserList, showUserListIDs } from "../../redux/actions";
 import BookItem from "../Book/BookItem";
-import { Avatar, Typography, Grid, ClickAwayListener, Snackbar, Button } from "@material-ui/core";
+import { Avatar, Typography, Grid, ClickAwayListener, Snackbar, Button, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Alert } from "@material-ui/lab";
 import NotFound from "../NotFound";
@@ -150,6 +150,50 @@ export default function UserScreen(){
         }
         return(false)
     }
+
+    const [alias, setAlias] = useState(user.alias);
+    const [name, setName] = useState(user.name);
+
+    const onChangeAlias = useCallback((e) => {
+        setAlias(e.target.value)
+    });
+    const onChangeName = useCallback((e) => {
+        setName(e.target.value)
+    });
+
+    useEffect(() => {
+        setEditing(false);
+        setAlias(user.alias);
+        setName(user.name);
+    }, [user]);
+
+    const onSave = useCallback((e) => {
+        e.preventDefault();
+        async function put(){
+            axios.put('user/me',{
+                alias,
+                name
+            }).then(response => {
+                setError(null);
+                dispatch(editUser({
+                    id: user.id,
+                    mail: user.mail,
+                    gender_id: user.gender_id,
+                    alias: response.data.alias,
+                    name: response.data.name,
+                }));
+                setEditing(false);
+            }).catch(error => {
+                if (error.response){
+                    setError(error.response.data);
+                    setMessage(error.response.data.message);
+                }
+                setOpen(true)
+            });
+        }
+        put();
+    }, [user, name, alias, dispatch]);
+
     console.log(isOwner())
     
     return(
@@ -173,12 +217,16 @@ export default function UserScreen(){
                     </Grid>
 
                     <Grid item xs={7} sm={12}>
-                        <Typography className={classes.info} variant='h5'>{user.name}</Typography>
-                        <Typography className={classes.info} variant="subtitle2">{"@"+user.alias}</Typography>
+                        {!editing && <><Typography className={classes.info} variant='h5'>{user.name}</Typography>
+                        <Typography className={classes.info} variant="subtitle2">{"@"+user.alias}</Typography></>}
+                        {editing && <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+                            <TextField size="small" label="name" value={name} onChange={onChangeName}/>
+                            <TextField size="small" label="alias" value={alias} onChange={onChangeAlias}/>
+                        </div>}
                         {isOwner() && !editing && <div className={classes.buttonContainer}><Button className={classes.button} variant="outlined" onClick={onClickEdit}>Editar perfil</Button></div>}
                         {isOwner() && editing && <div className={classes.buttonContainer}>
                             <Button className={classes.button} variant="outlined" onClick={onClickEdit}>Cancelar</Button>
-                            <Button className={classes.button} variant="outlined" onClick={onClickEdit}>Guardar</Button>
+                            <Button className={classes.button} variant="outlined" onClick={onSave}>Guardar</Button>
                         </div>}
                     </Grid>
                     <Grid item xs={12}>                        
