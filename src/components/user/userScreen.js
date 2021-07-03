@@ -1,10 +1,10 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { batch, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router";
 import { showBookList, showBookListIDs, showUser, showUserList, showUserListIDs } from "../../redux/actions";
 import BookItem from "../Book/BookItem";
-import { Avatar, Typography, Grid, ClickAwayListener, Snackbar } from "@material-ui/core";
+import { Avatar, Typography, Grid, ClickAwayListener, Snackbar, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Alert } from "@material-ui/lab";
 import NotFound from "../NotFound";
@@ -50,6 +50,23 @@ const useStyles = makeStyles((theme) => ({
         margin:0,
         border: '1px solid #f0f0f0',
         borderRadius: 10
+    },
+    button:{
+        transition: "1s ease",
+        borderColor: '#6fa1ff',
+        '&:hover':{
+            borderColor: '#a5c5ff',
+            background: '#fffff'
+        },
+        borderRadius: 15,
+        margin: 5
+    },
+    buttonContainer:{
+        display: 'flex',
+        justifyContent: 'center',
+        [theme.breakpoints.down('xs')]: {
+            justifyContent: 'flex-start'
+        },
     }
 }))
 
@@ -59,6 +76,9 @@ export default function UserScreen(){
     const userID = Number(useParams().id);
     const classes = useStyles()
 
+    const isAuthenticated = useSelector(state => state.models.authenticated);
+    const authUser = useSelector(state => state.models.authUser);
+    
     const user = useSelector(state => state.models.user);
 
     const bookIDs = useSelector(state => state.ui.books);
@@ -69,6 +89,8 @@ export default function UserScreen(){
     const [open, setOpen] = useState(false);
     const [ message, setMessage ] = useState(null);
     const [ notFound, setNotFound ] = useState(false)
+
+    const [editing, setEditing] = useState(false);
 
     async function fetch() {
         async function getUserById(){
@@ -116,6 +138,19 @@ export default function UserScreen(){
     const handleClose = () => {
         setOpen(false);
     };
+
+    const onClickEdit = useCallback((e) => {
+        e.preventDefault();
+        setEditing(!editing)
+    })
+
+    const isOwner = () => {
+        if(isAuthenticated && authUser.id === user.id){
+            return(true)
+        }
+        return(false)
+    }
+    console.log(isOwner())
     
     return(
         <div className = {classes.root}>
@@ -140,6 +175,11 @@ export default function UserScreen(){
                     <Grid item xs={7} sm={12}>
                         <Typography className={classes.info} variant='h5'>{user.name}</Typography>
                         <Typography className={classes.info} variant="subtitle2">{"@"+user.alias}</Typography>
+                        {isOwner() && !editing && <div className={classes.buttonContainer}><Button className={classes.button} variant="outlined" onClick={onClickEdit}>Editar perfil</Button></div>}
+                        {isOwner() && editing && <div className={classes.buttonContainer}>
+                            <Button className={classes.button} variant="outlined" onClick={onClickEdit}>Cancelar</Button>
+                            <Button className={classes.button} variant="outlined" onClick={onClickEdit}>Guardar</Button>
+                        </div>}
                     </Grid>
                     <Grid item xs={12}>                        
                         <span>{books.length} Libros publicados:</span>

@@ -77,8 +77,7 @@ function EditSection(props){
     const onClick = props.onClick;
     const title = props.values.title;
     const author = props.values.author;
-    
-    console.log(props.isOwner)
+
     if (props.isOwner){
         return(
             <Grid container>
@@ -145,8 +144,6 @@ export default function BookScreen(){
 
     const isAuthenticated = useSelector(state => state.models.authenticated);
     const authUser = useSelector(state => state.models.authUser);
-    console.log(authUser)
-
 
     const book = useSelector(state => state.models.book);
     const user = useSelector(state => state.models.user);
@@ -281,9 +278,9 @@ export default function BookScreen(){
                 dispatch(editBook({
                     id: bookID,
                     user_account_id: authUser.id,
-                    title: response.data.resp.title,
-                    author: response.data.resp.author,
-                    description: response.data.resp.description
+                    title: response.data.title,
+                    author: response.data.author,
+                    description: response.data.description
                 }));
                 setEditing(false);
             }).catch(error => {
